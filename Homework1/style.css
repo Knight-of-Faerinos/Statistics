@@ -68,7 +68,72 @@ input:focus, select:focus {
     border-color: #bb86fc;
 }
 
-/* Stile per il Canvas (se il tuo grafico lo usa) */
+/* Pannello di Controllo Unificato */
+.control-panel {
+    background: rgba(30, 30, 30, 0.8);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Stile delle singole righe */
+.input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-row label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #03dac6;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.input-row input {
+    background: #2c2c2c;
+    border: 1px solid #555;
+    color: white;
+    padding: 8px 10px;
+    border-radius: 6px;
+    width: 60px;
+    font-size: 1em;
+    text-align: center;
+}
+
+.input-row input:focus {
+    outline: none;
+    border-color: #bb86fc;
+}
+
+/* Differenziamo i due bottoni */
+#calculate-btn {
+    background: #bb86fc;
+    color: #121212;
+}
+
+#update-curve-btn {
+    background: transparent;
+    color: #bb86fc;
+    border: 2px solid #bb86fc;
+    box-shadow: none;
+}
+
+#update-curve-btn:hover {
+    background: #bb86fc;
+    color: #121212;
+    box-shadow: 0 4px 15px rgba(187, 134, 252, 0.3);
+}
+
+/* Stile per il Canvas */
 canvas {
     background-color: #252525;
     border: 2px solid #333;
@@ -91,5 +156,5 @@ th, td {
 }
 
 th {
-    color: #03dac6; /* Secondo colore accento: Verde acqua */
+    color: #03dac6;
 }
