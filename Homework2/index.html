@@ -316,6 +316,33 @@
                 Because Ethereum was already in active development before NIST finalized these changes, the developers chose to retain the original, unmodified <strong>Keccak-256</strong> algorithm. Consequently, hashing the exact same input through Ethereum's Keccak-256 and the standardized NIST SHA3-256 will mathematically yield <strong>two completely different outputs</strong>.
             </p>
         </div>
+            <h2 style="margin-top: 35px;">The Principle of Cryptographic Modularity</h2>
+        
+        <p style="font-size: 0.9rem; color: #444; margin-bottom: 20px; text-align: justify;">
+            A common question is why the Ethereum pipeline relies on so many different techniques instead of a single, unified cryptographic function. The answer lies in the <strong>separation of concerns</strong>. No single algorithm can be simultaneously optimized for human readability, asymmetric authorization, one-way data compression, and transcription error detection. Each protocol is a highly specialized tool solving a distinct problem in the overall system:
+        </p>
+
+        <ul style="padding-left: 20px; font-size: 0.9rem; color: #555;">
+            <li style="margin-bottom: 15px;">
+                <strong style="color: var(--primary);">BIP-39 / BIP-32 / BIP-44 (Key Management & Derivation):</strong><br>
+                These standards solve the <em>User Experience (UX) and Backup</em> problem. They transform abstract binary chaos into human-readable words and logically structure them into a deterministic, universally navigable tree. This completely eliminates the risk and impracticality of backing up individual private keys.
+            </li>
+            
+            <li style="margin-bottom: 15px;">
+                <strong style="color: var(--primary);">secp256k1 (Public/Private Relationship & Signatures):</strong><br>
+                This elliptic curve solves the <em>Authorization and Security</em> problem. It provides the mathematical trapdoor function necessary for asymmetric cryptography, allowing users to digitally sign transactions and irrefutably prove ownership of funds without ever exposing their private secret.
+            </li>
+
+            <li style="margin-bottom: 15px;">
+                <strong style="color: var(--primary);">Keccak-256 (Hashing):</strong><br>
+                This function solves the <em>Data Compression and Abstraction</em> problem. It irrevocably compresses a long, cumbersome 64-byte public key into a uniform 20-byte footprint, significantly reducing blockchain storage costs while masking the original public key until the first transaction is made.
+            </li>
+
+            <li style="margin-bottom: 0;">
+                <strong style="color: var(--primary);">EIP-55 (Checksum & Error Detection):</strong><br>
+                This encoding standard solves the <em>Human Fallibility</em> problem. It has no cryptographic security role; instead, it retrofits a safety net onto the raw hexadecimal address, using capitalization to detect typos and prevent users from accidentally burning funds due to a "fat-finger" mistake.
+            </li>
+        </ul>
         </div>
     </div>
 </body>
