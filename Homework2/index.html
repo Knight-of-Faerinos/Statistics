@@ -199,7 +199,39 @@
                     <strong>Role & Purpose:</strong> An error-detection mechanism engineered by Vitalik Buterin. It hashes the raw lowercase address; if the $i$-th nibble of the hash is $\ge 8$, the $i$-th alphabetic character of the address is capitalized. This creates a backward-compatible visual checksum. Statistically, since an address contains ~15 alphabetic characters acting as checksum bits, the probability of a randomly mistyped address being accepted as valid drops to ~0.024%.
                 </p>
             </div>
+            <h2 style="margin-top: 35px;">Core Cryptographic Distinctions</h2>
+        
+        <p style="font-size: 0.9rem; color: #444; margin-bottom: 20px;">
+            To fully understand the wallet architecture, it is essential to clearly distinguish between the different mathematical operations applied to the data throughout the pipeline.
+        </p>
 
+        <ul style="padding-left: 20px; font-size: 0.9rem; color: #555;">
+            <li style="margin-bottom: 15px;">
+                <strong style="color: var(--primary);">Key Generation vs. Key Derivation:</strong><br>
+                <em>Generation</em> is the creation of pure, unpredictable entropy from scratch. It relies on true randomness (e.g., generating the initial 128 bits for a BIP-39 mnemonic). The goal is mathematical chaos. <br>
+                <em>Derivation</em> is a strict deterministic algorithm applied to an existing seed. If repeated with the same input, it will always yield the exact same output (e.g., BIP-32 deriving child keys from a master seed). It structures chaos into a reproducible tree.
+            </li>
+
+            <li style="margin-bottom: 15px;">
+                <strong style="color: var(--primary);">Public-Key Cryptography (Asymmetric):</strong><br>
+                A system that uses mathematical trapdoor functions (like <code>secp256k1</code> elliptic curves) to create key pairs. It allows a user to compute a Public Key from a Private Key to receive funds, and use the Private Key to digitally sign transactions, proving ownership without ever revealing the secret key itself.
+            </li>
+
+            <li style="margin-bottom: 15px;">
+                <strong style="color: var(--primary);">Hashing:</strong><br>
+                A one-way mathematical function (like <code>Keccak-256</code>) that maps input data of arbitrary size to a fixed-size bit array (e.g., 256 bits). Unlike encryption, hashing cannot be reversed or decrypted. It is used to compress the public key, hide data, and ensure data integrity through the <em>Avalanche Effect</em> and collision resistance.
+            </li>
+
+            <li style="margin-bottom: 15px;">
+                <strong style="color: var(--primary);">Encoding:</strong><br>
+                The process of translating data from one format into another purely for human readability or system compatibility (e.g., converting binary data into Hexadecimal format for Ethereum addresses). Encoding does not use secret keys and does not hide or secure the data; it simply changes its representation.
+            </li>
+
+            <li style="margin-bottom: 15px;">
+                <strong style="color: var(--primary);">Checksums:</strong><br>
+                A mechanism specifically designed for error detection. It adds redundant data derived from the original payload. In the Ethereum pipeline (<code>EIP-55</code>), the checksum does not alter the address bytes but uses letter capitalization based on a hash to detect human transcription errors (typos).
+            </li>
+        </ul>
         </div>
     </div>
 </body>
