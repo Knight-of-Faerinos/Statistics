@@ -296,6 +296,26 @@
                 </span>
             </div>
         </div>
+        <h2 style="margin-top: 35px;">SHA-2 / SHA-512 vs. Keccak / SHA-3</h2>
+        
+        <p style="font-size: 0.9rem; color: #444; margin-bottom: 20px; text-align: justify;">
+            While all these algorithms belong to the family of cryptographic hash functions, they differ fundamentally in architecture and historical implementation.
+        </p>
+
+        <div style="background: #f8f9fa; border-left: 4px solid var(--accent); padding: 15px; margin-bottom: 20px; border-radius: 0 6px 6px 0;">
+            <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1rem;">Architectural Shift: Merkle-Damgård vs. Sponge</h3>
+            <p style="margin: 0; font-size: 0.85rem; color: #555; text-align: justify;">
+                <strong>SHA-2 (including SHA-512)</strong> relies on the older Merkle-Damgård construction. In contrast, <strong>Keccak</strong> introduced the innovative "sponge construction," which absorbs input data into an internal state and then squeezes out the final hash. This new architecture was specifically designed to be highly resistant to length-extension attacks, a known theoretical vulnerability in the SHA-2 family.
+            </p>
+        </div>
+
+        <div style="background: #f8f9fa; border-left: 4px solid var(--accent); padding: 15px; margin-bottom: 25px; border-radius: 0 6px 6px 0;">
+            <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1rem;">The Keccak vs. SHA-3 Discrepancy</h3>
+            <p style="margin: 0; font-size: 0.85rem; color: #555; text-align: justify;">
+                Keccak was the underlying algorithm selected by NIST to become the new <strong>SHA-3</strong> standard in 2015. However, before finalizing the standard, NIST slightly modified the internal <em>padding parameters</em> (specifically the domain-separation convention) to ensure clear separation from other hash outputs. <br><br>
+                Because Ethereum was already in active development before NIST finalized these changes, the developers chose to retain the original, unmodified <strong>Keccak-256</strong> algorithm. Consequently, hashing the exact same input through Ethereum's Keccak-256 and the standardized NIST SHA3-256 will mathematically yield <strong>two completely different outputs</strong>.
+            </p>
+        </div>
         </div>
     </div>
 </body>
