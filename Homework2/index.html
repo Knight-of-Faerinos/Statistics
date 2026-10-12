@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMWK 2: Ethereum Wallet Cryptographic Pipeline</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --background-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+        }
+
+        header p {
+            margin-top: 0.5rem;
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        /* Stili per la Pipeline */
+        .pipeline-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 3rem 0;
+        }
+
+        .pipeline-step {
+            background-color: var(--card-bg);
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .pipeline-step:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+        }
+
+        .pipeline-step h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .standard-badge {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: normal;
+        }
+
+        .pipeline-step p {
+            margin: 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .arrow-down {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin: 0.5rem 0;
+            line-height: 1;
+        }
+
+        /* Tipografia per termini tecnici */
+        code {
+            background-color: #f1f2f6;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.9em;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>From Wallet Seed to Ethereum Address</h1>
+        <p>Hashing, Key Derivation and Cryptographic Primitives</p>
+    </header>
+
+    <main>
+        <section id="introduzione">
+            <h2>Panoramica del Sistema</h2>
+            <p>La generazione di un indirizzo Ethereum non si basa su un singolo algoritmo, ma su una pipeline modulare. Ogni standard crittografico ha un ruolo specifico per garantire sicurezza matematica, usabilità e prevenzione degli errori umani.</p>
+        </section>
+
+        <section id="pipeline-grafica">
+            <h2>La Pipeline Crittografica</h2>
+            
+            <div class="pipeline-container">
+                
+                <!-- Step 1 -->
+                <div class="pipeline-step">
+                    <h3>Mnemonic Phrase <span class="standard-badge">BIP-39</span></h3>
+                    <p>Generazione dell'entropia iniziale (128-256 bit) convertita in una sequenza di 12 o 24 parole leggibili per facilitare il backup all'utente.</p>
+                </div>
+
+                <div class="arrow-down">↓</div>
+
+                <!-- Step 2 -->
+                <div class="pipeline-step">
+                    <h3>Master Seed & Derivation <span class="standard-badge">BIP-32 / BIP-44</span></h3>
+                    <p>Le parole vengono convertite in un seme da 512 bit (tramite PBKDF2). Da questo, si deriva deterministicamente l'albero delle chiavi usando il percorso standard <code>m/44'/60'/0'/0/0</code> per Ethereum.</p>
+                </div>
+
+                <div class="arrow-down">↓</div>
+
+                <!-- Step 3 -->
+                <div class="pipeline-step">
+                    <h3>Private / Public Key <span class="standard-badge">secp256k1</span></h3>
+                    <p>La chiave privata viene moltiplicata sulla curva ellittica per generare la Chiave Pubblica. Un processo matematicamente unidirezionale che garantisce la proprietà dei fondi.</p>
+                </div>
+
+                <div class="arrow-down">↓</div>
+
+                <!-- Step 4 -->
+                <div class="pipeline-step">
+                    <h3>Raw Ethereum Address <span class="standard-badge">Keccak-256</span></h3>
+                    <p>La chiave pubblica subisce l'hashing. Gli ultimi 20 byte dell'output formano l'indirizzo base esadecimale (tutto in minuscolo).</p>
+                </div>
+
+                <div class="arrow-down">↓</div>
+
+                <!-- Step 5 -->
+                <div class="pipeline-step">
+                    <h3>Checksummed Address <span class="standard-badge">EIP-55</span></h3>
+                    <p>Un secondo hashing determina il case (maiuscolo/minuscolo) delle lettere dell'indirizzo, introducendo un checksum visivo per prevenire errori di digitazione.</p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>
