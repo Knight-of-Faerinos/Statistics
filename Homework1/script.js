@@ -49,8 +49,9 @@ function generateSequence(basePoint, privateKey) {
 let currentInterval = null;
 
 function runCalculation() {
-    const bpValue = document.getElementById('base-point-select').value;
-    const baseG = bpValue.split(',').map(Number);
+    const gx = parseInt(document.getElementById('base-point-x').value);
+    const gy = parseInt(document.getElementById('base-point-y').value);
+    const baseG = [gx, gy];
     const privateK = parseInt(document.getElementById('private-key-input').value);
 
     const eccSequence = generateSequence(baseG, privateK);
