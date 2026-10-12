@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,21 +12,22 @@
     <div class="container">
       <h1>Interactive Toy ECC: G &rarr; kG</h1>
       
+      <!-- PANNELLO DASHBOARD ORIZZONTALE -->
       <div class="dashboard-panel">
           
           <!-- Riga 1: Parametri Curva -->
           <div class="dash-row">
               <div class="dash-inputs">
                   <div class="input-block">
-                      <label>PARAM a:</label>
+                      <label>PARAM a</label>
                       <input type="number" id="val-a" value="0">
                   </div>
                   <div class="input-block">
-                      <label>PARAM b:</label>
+                      <label>PARAM b</label>
                       <input type="number" id="val-b" value="7">
                   </div>
                   <div class="input-block">
-                      <label>PRIME (p):</label>
+                      <label>PRIME (p)</label>
                       <input type="number" id="val-p" value="17">
                   </div>
               </div>
@@ -38,23 +40,23 @@
           <div class="dash-row">
               <div class="dash-inputs">
                   <div class="input-block">
-                      <label>BASE G (X):</label>
+                      <label>BASE G (X)</label>
                       <input type="number" id="base-point-x" value="1">
                   </div>
                   <div class="input-block">
-                      <label>BASE G (Y):</label>
+                      <label>BASE G (Y)</label>
                       <input type="number" id="base-point-y" value="5">
                   </div>
                   <div class="input-block">
-                      <label>PRIVATE KEY (k):</label>
+                      <label>PRIV KEY (k)</label>
                       <input type="number" id="private-key-input" value="6" min="1" max="20">
                   </div>
               </div>
               <button id="calculate-btn" class="dash-btn solid-btn">Calculate Key</button>
           </div>
-          
       </div>
-      
+      <!-- FINE PANNELLO -->
+
       <div class="layout">
         <div class="text-results">
           <h2>Sequence:</h2>
