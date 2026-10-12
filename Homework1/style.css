@@ -69,105 +69,100 @@ input:focus, select:focus {
 }
 
 /* Pannello di Controllo Unificato */
-.control-panel {
-    display: flex;
-    flex-direction: row;
-    gap: 25px;
-    width: 100%;
-    margin-bottom: 30px;
-}
-
-/* Adatta a schermi piccoli */
-@media (max-width: 768px) {
-    .control-panel {
-        flex-direction: column;
-    }
-}
-
-.control-card {
-    background: rgba(30, 30, 30, 0.5);
-    border: 1px solid #333;
+.dashboard-panel {
+    background-color: #1a1e24; /* Grigio bluastro scuro elegante */
+    border: 1px solid #2d333b;
     border-radius: 12px;
-    padding: 25px;
-    flex: 1; /* Le due card occupano metà spazio ciascuna */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
+    padding: 25px 30px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
 }
 
-.control-card h3 {
-    margin-top: 0;
-    font-size: 1.1em;
-    color: #03dac6; /* Verde acqua */
-    text-align: left;
-    border-bottom: 1px solid #444;
-    padding-bottom: 12px;
-    margin-bottom: 20px;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.input-group label {
+.dash-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    color: #cccccc;
-    font-size: 0.95em;
-    font-weight: 500;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
-.input-group input {
-    background: #121212;
-    border: 1px solid #444;
-    color: #ffffff;
-    padding: 10px;
-    border-radius: 8px;
-    width: 80px;
-    text-align: center;
+.dash-inputs {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.input-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-block label {
+    font-size: 0.75em;
+    font-weight: 700;
+    color: #8b949e; /* Grigio chiaro per etichette */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-block input {
+    background-color: #0d1117; /* Sfondo input molto scuro */
+    border: 1px solid #30363d;
+    color: #c9d1d9;
+    padding: 10px 14px;
+    border-radius: 6px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 1em;
-    transition: all 0.3s ease;
+    width: 90px;
+    box-sizing: border-box;
 }
 
-.input-group input:focus {
+.input-block input:focus {
     outline: none;
     border-color: #bb86fc;
-    box-shadow: 0 0 10px rgba(187, 134, 252, 0.2);
 }
 
-/* Bottoni Larghi e Centrati nelle Card */
-.control-card button {
+/* Divisore orizzontale sottile tra le due righe */
+.divider {
+    height: 1px;
+    background-color: #2d333b;
+    margin: 25px 0;
     width: 100%;
-    padding: 14px;
-    border-radius: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+}
+
+/* Stile base Bottoni */
+.dash-btn {
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: bold;
     font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 42px; /* Allinea perfettamente gli input */
+    white-space: nowrap;
 }
 
-#calculate-btn {
-    background: #bb86fc;
+.solid-btn {
+    background-color: #bb86fc;
     color: #121212;
+    border: none;
 }
 
-#update-curve-btn {
-    background: transparent;
+.solid-btn:hover {
+    background-color: #a36cf3;
+}
+
+.outline-btn {
+    background-color: transparent;
     color: #bb86fc;
-    border: 2px solid #bb86fc;
-    box-shadow: none;
+    border: 1px solid #bb86fc;
 }
 
-#update-curve-btn:hover {
-    background: #bb86fc;
-    color: #121212;
-    box-shadow: 0 4px 15px rgba(187, 134, 252, 0.3);
+.outline-btn:hover {
+    background-color: rgba(187, 134, 252, 0.1);
 }
 /* Stile per il Canvas */
 canvas {
