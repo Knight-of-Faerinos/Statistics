@@ -27,6 +27,12 @@
             </label>
             <button id="calculate-btn">Calculate Key</button>
         </div>
+          <div class="curve-params">
+              <label>a: <input type="number" id="val-a" value="0"></label>
+              <label>b: <input type="number" id="val-b" value="7"></label>
+              <label>Prime (p): <input type="number" id="val-p" value="17"></label>
+              <button id="update-curve-btn" onclick="updateCurve()">Update Curve</button>
+          </div>
       </div>
       
       <div class="layout">
@@ -40,7 +46,7 @@
         </div>
         
         <div class="canvas-container">
-          <h2>Visual Representation (Guru)</h2>
+          <h2>Visual Representation</h2>
           <canvas id="ecc-canvas" width="400" height="400"></canvas> 
         </div>
       </div>
