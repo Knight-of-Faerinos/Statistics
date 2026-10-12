@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Toy ECC</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <div class="container">
+      <h1>Interactive Toy ECC: G &rarr; kG</h1>
+      
+      <div class="controls-box">
+        <p><strong>Curve:</strong> y² = x³ + 7 (mod 17)</p>
+        <div class="inputs-row">
+            <label>Base Point (G): 
+                <select id="base-point-select">
+                    <option value="1,5" selected>[1, 5]</option>
+                    <option value="2,10">[2, 10]</option>
+                    <option value="5,8">[5, 8]</option>
+                    <option value="15,13">[15, 13]</option>
+                </select>
+            </label>
+            <label>Private Key (k): 
+                <input type="number" id="private-key-input" value="6" min="1" max="20">
+            </label>
+            <button id="calculate-btn">Calculate Key</button>
+        </div>
+      </div>
+      
+      <div class="layout">
+        <div class="text-results">
+          <h2>Sequence:</h2>
+          <ul id="points-list"></ul>
+          <div class="result-box">
+            <h3>TOY PUBLIC KEY:</h3>
+            <div id="public-key-output">Press Calculate...</div>
+          </div>
+        </div>
+        
+        <div class="canvas-container">
+          <h2>Visual Representation (Guru)</h2>
+          <canvas id="ecc-canvas" width="400" height="400"></canvas> 
+        </div>
+      </div>
+
+      <div class="explanation-box">
+          <h2>How it Works & Statistical Exploration</h2>
+          <p><strong>1. The Math:</strong> In elliptic curve cryptography, we don't multiply numbers normally. To find $kG$ (Public Key), we start at the Base Point $G$ and mathematically "add" it to itself $k$ times using finite field geometry modulo 17.</p>
+          <p><strong>2. The Avalanche Effect:</strong> Try changing the Private Key slightly (e.g., from 6 to 7). Notice how the final Public Key jumps to a completely unpredictable new location. This lack of input-output correlation is why recovering the private key from the public key (ECDLP) is computationally difficult.</p>
+          <p><strong>3. Hashes vs ECC:</strong> While hashes (like SHA-256) destroy all mathematical structure to create a random fingerprint, ECC maintains a strict algebraic group structure. This structure is what allows us to create digital signatures (like in Ethereum) while still acting as a cryptographic one-way function.</p>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>
