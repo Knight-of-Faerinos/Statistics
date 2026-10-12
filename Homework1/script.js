@@ -89,7 +89,7 @@ function runCalculation() {
         for (let i = 0; i <= P; i++) {
             ctx.beginPath(); ctx.moveTo(padding + i * scale, padding); ctx.lineTo(padding + i * scale, padding + P * scale); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(padding, padding + i * scale); ctx.lineTo(padding + P * scale, padding + i * scale); ctx.stroke();
-            ctx.fillStyle = '#888'; ctx.font = '10px Arial';
+            ctx.fillStyle = '#cccccc'; ctx.font = '10px Arial';
             if (i % 2 === 0) {
                 ctx.fillText(i, padding + i * scale - 4, padding + P * scale + 15);
                 ctx.fillText(P - i, padding - 20, padding + i * scale + 4);
@@ -123,7 +123,7 @@ function runCalculation() {
         }
         let pt = eccSequence[step].point;
         if (pt !== O) {
-            ctx.fillStyle = (step === eccSequence.length - 1) ? '#50fa7b' : '#ff79c6';
+            ctx.fillStyle = (step === eccSequence.length - 1) ? '#03dac6' : '#bb86fc';
             ctx.beginPath(); ctx.arc(padding + pt[0] * scale, padding + (P - pt[1]) * scale, 6, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Courier';
             ctx.fillText(`${step+1}G`, padding + pt[0] * scale + 8, padding + (P - pt[1]) * scale - 8);
