@@ -161,6 +161,46 @@
                 <p>A second hash determines the capitalization of the address characters, introducing a backward-compatible visual checksum to prevent typing errors.</p>
             </div>
         </div>
+        <h2 style="margin-top: 35px;">In-Depth Analysis of Standards and Primitives</h2>
+        
+        <div style="display: grid; gap: 15px;">
+            
+            <div style="background: #f8f9fa; border: 1px solid #e1e4e8; border-radius: 6px; padding: 15px;">
+                <h3 style="margin-bottom: 8px; font-size: 1rem;">BIP-39: Mnemonic Sentence and Seed</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: #555; text-align: justify;">
+                    <strong>Role & Purpose:</strong> Solves the human-computer interaction problem of backing up cryptographic data. It maps random entropy (e.g., 128 bits) to a standardized list of 2048 words. A checksum (4 bits for 12 words) is appended. The resulting phrase is passed through the <code>PBKDF2</code> key-stretching function (using HMAC-SHA512 with 2048 iterations) to generate a secure 512-bit master seed. Statistically, the $2^{128}$ entropy space makes generating colliding wallets virtually impossible.
+                </p>
+            </div>
+
+            <div style="background: #f8f9fa; border: 1px solid #e1e4e8; border-radius: 6px; padding: 15px;">
+                <h3 style="margin-bottom: 8px; font-size: 1rem;">BIP-32 & BIP-44: Hierarchical Deterministic Derivation</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: #555; text-align: justify;">
+                    <strong>Role & Purpose:</strong> <em>BIP-32</em> allows the creation of an infinite tree of cryptographic keys from a single master seed using <code>HMAC-SHA512</code>. This means users only need to back up the initial mnemonic once. <em>BIP-44</em> provides the standard navigation map for this tree (<code>m / purpose' / coin_type' / account' / change / address_index</code>). For Ethereum, the coin type is <code>60'</code>, ensuring wallet software exactly knows which branch to explore without mixing Bitcoin and Ethereum keys.
+                </p>
+            </div>
+
+            <div style="background: #f8f9fa; border: 1px solid #e1e4e8; border-radius: 6px; padding: 15px;">
+                <h3 style="margin-bottom: 8px; font-size: 1rem;">secp256k1: Elliptic-Curve Cryptography (ECC)</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: #555; text-align: justify;">
+                    <strong>Role & Purpose:</strong> Handles asymmetric cryptography for digital signatures. It uses scalar multiplication on the curve defined by $y^2 = x^3 + 7$. The private key is multiplied by a base Generator Point (G) to derive the Public Key. This is a mathematical trapdoor: trivial to compute forward, but computationally infeasible to reverse (finding the private key from the public key) due to the Discrete Logarithm Problem across a massive $2^{256}$ key space.
+                </p>
+            </div>
+
+            <div style="background: #f8f9fa; border: 1px solid #e1e4e8; border-radius: 6px; padding: 15px;">
+                <h3 style="margin-bottom: 8px; font-size: 1rem;">Keccak-256: Cryptographic Hashing</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: #555; text-align: justify;">
+                    <strong>Role & Purpose:</strong> Acts as a one-way compression function. It takes the uncompressed 64-byte public key and hashes it to derive a shorter, uniform identifier. The Ethereum address is formed by taking only the last 20 bytes of this hash. Statistically, it relies on the <em>Avalanche Effect</em> (changing a single input bit alters ~50% of output bits) and collision resistance governed by the Birthday Paradox (requiring ~$2^{128}$ operations to find a collision).
+                </p>
+            </div>
+
+            <div style="background: #f8f9fa; border: 1px solid #e1e4e8; border-radius: 6px; padding: 15px;">
+                <h3 style="margin-bottom: 8px; font-size: 1rem;">EIP-55: Mixed-case Checksum Encoding</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: #555; text-align: justify;">
+                    <strong>Role & Purpose:</strong> An error-detection mechanism engineered by Vitalik Buterin. It hashes the raw lowercase address; if the $i$-th nibble of the hash is $\ge 8$, the $i$-th alphabetic character of the address is capitalized. This creates a backward-compatible visual checksum. Statistically, since an address contains ~15 alphabetic characters acting as checksum bits, the probability of a randomly mistyped address being accepted as valid drops to ~0.024%.
+                </p>
+            </div>
+
+        </div>
     </div>
 </body>
 </html>
