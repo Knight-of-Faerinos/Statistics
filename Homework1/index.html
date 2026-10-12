@@ -11,28 +11,48 @@
     <div class="container">
       <h1>Interactive Toy ECC: G &rarr; kG</h1>
       
-      <div class="control-panel">
-          <!-- Card 1: Parametri della Curva -->
-          <div class="control-card">
-              <h3>⚙️ Curve Parameters</h3>
-              <div class="input-group">
-                  <label><span>Parameter a:</span> <input type="number" id="val-a" value="0"></label>
-                  <label><span>Parameter b:</span> <input type="number" id="val-b" value="7"></label>
-                  <label><span>Prime (p):</span> <input type="number" id="val-p" value="17"></label>
+      <div class="dashboard-panel">
+          
+          <!-- Riga 1: Parametri Curva -->
+          <div class="dash-row">
+              <div class="dash-inputs">
+                  <div class="input-block">
+                      <label>PARAM a:</label>
+                      <input type="number" id="val-a" value="0">
+                  </div>
+                  <div class="input-block">
+                      <label>PARAM b:</label>
+                      <input type="number" id="val-b" value="7">
+                  </div>
+                  <div class="input-block">
+                      <label>PRIME (p):</label>
+                      <input type="number" id="val-p" value="17">
+                  </div>
               </div>
-              <button id="update-curve-btn" onclick="updateCurve()">Update Curve</button>
+              <button id="update-curve-btn" class="dash-btn outline-btn" onclick="updateCurve()">Update Curve</button>
           </div>
 
-          <!-- Card 2: Calcolo della Chiave -->
-          <div class="control-card">
-              <h3>🔑 Key Calculation</h3>
-              <div class="input-group">
-                  <label><span>Base G (x):</span> <input type="number" id="base-point-x" value="1"></label>
-                  <label><span>Base G (y):</span> <input type="number" id="base-point-y" value="5"></label>
-                  <label><span>Private Key (k):</span> <input type="number" id="private-key-input" value="6" min="1" max="20"></label>
+          <div class="divider"></div>
+
+          <!-- Riga 2: Calcolo Chiavi -->
+          <div class="dash-row">
+              <div class="dash-inputs">
+                  <div class="input-block">
+                      <label>BASE G (X):</label>
+                      <input type="number" id="base-point-x" value="1">
+                  </div>
+                  <div class="input-block">
+                      <label>BASE G (Y):</label>
+                      <input type="number" id="base-point-y" value="5">
+                  </div>
+                  <div class="input-block">
+                      <label>PRIVATE KEY (k):</label>
+                      <input type="number" id="private-key-input" value="6" min="1" max="20">
+                  </div>
               </div>
-              <button id="calculate-btn">Calculate Key</button>
+              <button id="calculate-btn" class="dash-btn solid-btn">Calculate Key</button>
           </div>
+          
       </div>
       
       <div class="layout">
