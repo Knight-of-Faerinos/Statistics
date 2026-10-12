@@ -234,51 +234,66 @@
         </ul>
         <h2 style="margin-top: 35px;">Chronological & Historical Context</h2>
         
-        <p style="font-size: 0.9rem; color: #444; margin-bottom: 20px;">
-            The modern Ethereum wallet pipeline is not a monolithic invention but an assembly of cryptographic primitives developed over four decades.
+        <p style="font-size: 0.9rem; color: #444; margin-bottom: 25px;">
+            The modern Ethereum wallet pipeline is not a monolithic invention but an assembly of cryptographic primitives developed and perfected over four decades.
         </p>
 
-        <div style="border-left: 2px solid #bdc3c7; padding-left: 15px; margin-left: 8px;">
-            <div style="margin-bottom: 15px; position: relative;">
-                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
-                <strong style="color: var(--primary); font-size: 0.95rem;">1977 — RSA:</strong><br>
-                <span style="font-size: 0.85rem; color: #555;">Introduction of public-key cryptography, laying the mathematical foundation for asymmetric systems.</span>
+        <div style="border-left: 2px solid #bdc3c7; padding-left: 20px; margin-left: 10px; position: relative;">
+            
+            <div style="margin-bottom: 22px; position: relative;">
+                <span style="position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; background-color: var(--accent); border-radius: 50%; box-shadow: 0 0 0 4px #ffffff;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">1977 — RSA (Public-Key Cryptography):</strong><br>
+                <span style="font-size: 0.85rem; color: #555; display: block; margin-top: 4px; text-align: justify;">
+                    Introduced by Rivest, Shamir, and Adleman, this was the first practical realization of asymmetric cryptography. It proved mathematically that two distinct but linked keys (public and private) could be used to securely sign transactions and encrypt data without ever sharing the underlying secret, laying the fundamental groundwork for all modern blockchain authorization systems.
+                </span>
             </div>
             
-            <div style="margin-bottom: 15px; position: relative;">
-                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
+            <div style="margin-bottom: 22px; position: relative;">
+                <span style="position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; background-color: var(--accent); border-radius: 50%; box-shadow: 0 0 0 4px #ffffff;"></span>
                 <strong style="color: var(--primary); font-size: 0.95rem;">2001 — SHA-2 / SHA-512:</strong><br>
-                <span style="font-size: 0.85rem; color: #555;">Standardized by NIST, establishing the robust hashing functions used heavily in early blockchain architectures (like Bitcoin).</span>
+                <span style="font-size: 0.85rem; color: #555; display: block; margin-top: 4px; text-align: justify;">
+                    Standardized by NIST to replace older, vulnerable algorithms like MD5 and SHA-1. Based on the Merkle-Damgård architecture, it established the robust hashing standards heavily utilized in early blockchain protocols (e.g., Bitcoin uses SHA-256 extensively for mining and address derivation).
+                </span>
             </div>
             
-            <div style="margin-bottom: 15px; position: relative;">
-                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
-                <strong style="color: var(--primary); font-size: 0.95rem;">2012 — BIP-32:</strong><br>
-                <span style="font-size: 0.85rem; color: #555;">Introduction of Hierarchical Deterministic (HD) wallets, solving the impracticality of backing up every newly generated private key.</span>
+            <div style="margin-bottom: 22px; position: relative;">
+                <span style="position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; background-color: var(--accent); border-radius: 50%; box-shadow: 0 0 0 4px #ffffff;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2012 — BIP-32 (HD Wallets):</strong><br>
+                <span style="font-size: 0.85rem; color: #555; display: block; margin-top: 4px; text-align: justify;">
+                    Before this proposal, users had to constantly back up a <code>wallet.dat</code> file every time a new private key was generated. BIP-32 revolutionized asset management by introducing Hierarchical Deterministic (HD) wallets, allowing an infinite tree of keys to be derived mathematically from a single root seed.
+                </span>
             </div>
             
-            <div style="margin-bottom: 15px; position: relative;">
-                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
-                <strong style="color: var(--primary); font-size: 0.95rem;">2013 — BIP-39:</strong><br>
-                <span style="font-size: 0.85rem; color: #555;">Creation of the mnemonic code standard, mapping bits to readable words for user-friendly wallet restoration.</span>
+            <div style="margin-bottom: 22px; position: relative;">
+                <span style="position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; background-color: var(--accent); border-radius: 50%; box-shadow: 0 0 0 4px #ffffff;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2013 — BIP-39 (Mnemonic Codes):</strong><br>
+                <span style="font-size: 0.85rem; color: #555; display: block; margin-top: 4px; text-align: justify;">
+                    Solved the human-computer interaction problem of handling raw binary seeds. It created the standard to map 128-256 bits of entropy into a readable 12 or 24-word phrase using a fixed 2048-word dictionary, making paper backups ("cold storage") safe, practical, and immune to transcription errors compared to hexadecimal strings.
+                </span>
             </div>
             
-            <div style="margin-bottom: 15px; position: relative;">
-                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
-                <strong style="color: var(--primary); font-size: 0.95rem;">2014 — BIP-44:</strong><br>
-                <span style="font-size: 0.85rem; color: #555;">Standardization of multi-account derivation paths, allowing a single HD wallet to cleanly organize multiple cryptocurrencies.</span>
+            <div style="margin-bottom: 22px; position: relative;">
+                <span style="position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; background-color: var(--accent); border-radius: 50%; box-shadow: 0 0 0 4px #ffffff;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2014 — BIP-44 (Multi-Account Paths):</strong><br>
+                <span style="font-size: 0.85rem; color: #555; display: block; margin-top: 4px; text-align: justify;">
+                    Provided a universal organizational structure for BIP-32 HD wallets. By standardizing the derivation paths, it allowed a single mnemonic phrase to cleanly organize and independently manage thousands of different cryptocurrencies across multiple accounts without collision.
+                </span>
             </div>
             
-            <div style="margin-bottom: 15px; position: relative;">
-                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
-                <strong style="color: var(--primary); font-size: 0.95rem;">2015 — SHA-3 (NIST):</strong><br>
-                <span style="font-size: 0.85rem; color: #555;">Standardized by NIST based on the Keccak algorithm.</span>
+            <div style="margin-bottom: 22px; position: relative;">
+                <span style="position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; background-color: var(--accent); border-radius: 50%; box-shadow: 0 0 0 4px #ffffff;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2015 — SHA-3 (NIST) / Keccak:</strong><br>
+                <span style="font-size: 0.85rem; color: #555; display: block; margin-top: 4px; text-align: justify;">
+                    Standardized by NIST following a multi-year competition won by the Keccak algorithm. It introduced the "sponge construction", offering superior resistance to length-extension attacks compared to SHA-2. Ethereum adopted the original Keccak-256 parameters before the final NIST SHA-3 modifications were published.
+                </span>
             </div>
             
             <div style="position: relative;">
-                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
-                <strong style="color: var(--primary); font-size: 0.95rem;">2016 — EIP-55:</strong><br>
-                <span style="font-size: 0.85rem; color: #555;">Ethereum mixed-case checksum addresses introduced, adding an error-detection layer to raw hexadecimal strings.</span>
+                <span style="position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; background-color: var(--accent); border-radius: 50%; box-shadow: 0 0 0 4px #ffffff;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2016 — EIP-55 (Mixed-case Checksum):</strong><br>
+                <span style="font-size: 0.85rem; color: #555; display: block; margin-top: 4px; text-align: justify;">
+                    Proposed by Vitalik Buterin, this standard cleverly repurposed the Keccak-256 hash function to toggle the capitalization of address characters. It added a highly effective error-detection layer to raw hexadecimal strings while maintaining 100% backward compatibility with older wallet software.
+                </span>
             </div>
         </div>
         </div>
