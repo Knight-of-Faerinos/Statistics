@@ -11,21 +11,17 @@
     <div class="container">
       <h1>Interactive Toy ECC: G &rarr; kG</h1>
       
-      <div class="controls-box">
-        <p><strong>Curve:</strong> y² = x³ + 7 (mod 17)</p>
-        <div class="inputs-row">
-            <label>Base Point (G): 
-                <select id="base-point-select">
-                    <label>Base Point G (x): <input type="number" id="base-point-x" value="1"></label>
-                    <label>Base Point G (y): <input type="number" id="base-point-y" value="5"></label>
-                </select>
-            </label>
-            <label>Private Key (k): 
-                <input type="number" id="private-key-input" value="6" min="1" max="20">
-            </label>
-            <button id="calculate-btn">Calculate Key</button>
-        </div>
-          <div class="curve-params">
+      <div class="control-panel">
+          <!-- Prima riga: Calcolo della Chiave -->
+          <div class="input-row">
+              <label>Base G (x): <input type="number" id="base-point-x" value="1"></label>
+              <label>Base G (y): <input type="number" id="base-point-y" value="5"></label>
+              <label>Private Key (k): <input type="number" id="private-key-input" value="6" min="1" max="20"></label>
+              <button id="calculate-btn">Calculate Key</button>
+          </div>
+
+          <!-- Seconda riga: Parametri della Curva -->
+          <div class="input-row">
               <label>a: <input type="number" id="val-a" value="0"></label>
               <label>b: <input type="number" id="val-b" value="7"></label>
               <label>Prime (p): <input type="number" id="val-p" value="17"></label>
