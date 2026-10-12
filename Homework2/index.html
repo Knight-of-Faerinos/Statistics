@@ -232,6 +232,55 @@
                 A mechanism specifically designed for error detection. It adds redundant data derived from the original payload. In the Ethereum pipeline (<code>EIP-55</code>), the checksum does not alter the address bytes but uses letter capitalization based on a hash to detect human transcription errors (typos).
             </li>
         </ul>
+        <h2 style="margin-top: 35px;">Chronological & Historical Context</h2>
+        
+        <p style="font-size: 0.9rem; color: #444; margin-bottom: 20px;">
+            The modern Ethereum wallet pipeline is not a monolithic invention but an assembly of cryptographic primitives developed over four decades.
+        </p>
+
+        <div style="border-left: 2px solid #bdc3c7; padding-left: 15px; margin-left: 8px;">
+            <div style="margin-bottom: 15px; position: relative;">
+                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">1977 — RSA:</strong><br>
+                <span style="font-size: 0.85rem; color: #555;">Introduction of public-key cryptography, laying the mathematical foundation for asymmetric systems.</span>
+            </div>
+            
+            <div style="margin-bottom: 15px; position: relative;">
+                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2001 — SHA-2 / SHA-512:</strong><br>
+                <span style="font-size: 0.85rem; color: #555;">Standardized by NIST, establishing the robust hashing functions used heavily in early blockchain architectures (like Bitcoin).</span>
+            </div>
+            
+            <div style="margin-bottom: 15px; position: relative;">
+                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2012 — BIP-32:</strong><br>
+                <span style="font-size: 0.85rem; color: #555;">Introduction of Hierarchical Deterministic (HD) wallets, solving the impracticality of backing up every newly generated private key.</span>
+            </div>
+            
+            <div style="margin-bottom: 15px; position: relative;">
+                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2013 — BIP-39:</strong><br>
+                <span style="font-size: 0.85rem; color: #555;">Creation of the mnemonic code standard, mapping bits to readable words for user-friendly wallet restoration.</span>
+            </div>
+            
+            <div style="margin-bottom: 15px; position: relative;">
+                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2014 — BIP-44:</strong><br>
+                <span style="font-size: 0.85rem; color: #555;">Standardization of multi-account derivation paths, allowing a single HD wallet to cleanly organize multiple cryptocurrencies.</span>
+            </div>
+            
+            <div style="margin-bottom: 15px; position: relative;">
+                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2015 — SHA-3 (NIST):</strong><br>
+                <span style="font-size: 0.85rem; color: #555;">Standardized by NIST based on the Keccak algorithm.</span>
+            </div>
+            
+            <div style="position: relative;">
+                <span style="position: absolute; left: -20px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
+                <strong style="color: var(--primary); font-size: 0.95rem;">2016 — EIP-55:</strong><br>
+                <span style="font-size: 0.85rem; color: #555;">Ethereum mixed-case checksum addresses introduced, adding an error-detection layer to raw hexadecimal strings.</span>
+            </div>
+        </div>
         </div>
     </div>
 </body>
