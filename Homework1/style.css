@@ -70,51 +70,88 @@ input:focus, select:focus {
 
 /* Pannello di Controllo Unificato */
 .control-panel {
-    background: rgba(30, 30, 30, 0.8);
-    padding: 20px;
-    border-radius: 12px;
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+/* Adatta a schermi piccoli */
+@media (max-width: 768px) {
+    .control-panel {
+        flex-direction: column;
+    }
+}
+
+.control-card {
+    background: rgba(30, 30, 30, 0.5);
     border: 1px solid #333;
-    margin-bottom: 25px;
+    border-radius: 12px;
+    padding: 25px;
+    flex: 1; /* Le due card occupano metà spazio ciascuna */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.control-card h3 {
+    margin-top: 0;
+    font-size: 1.1em;
+    color: #03dac6; /* Verde acqua */
+    text-align: left;
+    border-bottom: 1px solid #444;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
+
+.input-group {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    margin-bottom: 25px;
 }
 
-/* Stile delle singole righe */
-.input-row {
+.input-group label {
     display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
+    color: #cccccc;
+    font-size: 0.95em;
+    font-weight: 500;
 }
 
-.input-row label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #03dac6;
-    font-weight: bold;
+.input-group input {
+    background: #121212;
+    border: 1px solid #444;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+    width: 80px;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #bb86fc;
+    box-shadow: 0 0 10px rgba(187, 134, 252, 0.2);
+}
+
+/* Bottoni Larghi e Centrati nelle Card */
+.control-card button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     font-size: 0.9em;
 }
 
-.input-row input {
-    background: #2c2c2c;
-    border: 1px solid #555;
-    color: white;
-    padding: 8px 10px;
-    border-radius: 6px;
-    width: 60px;
-    font-size: 1em;
-    text-align: center;
-}
-
-.input-row input:focus {
-    outline: none;
-    border-color: #bb86fc;
-}
-
-/* Differenziamo i due bottoni */
 #calculate-btn {
     background: #bb86fc;
     color: #121212;
@@ -132,7 +169,6 @@ input:focus, select:focus {
     color: #121212;
     box-shadow: 0 4px 15px rgba(187, 134, 252, 0.3);
 }
-
 /* Stile per il Canvas */
 canvas {
     background-color: #252525;
