@@ -1,10 +1,9 @@
 // ==========================================
 // --- STEP 1 & 2: ECC MATH ---
 // ==========================================
-let P = 17; 
-let A = 0; 
-let B = 7;
-let O = "O";
+const P = 17; 
+const A = 0; 
+const O = "O"; 
 
 function mod(n, p) { return ((n % p) + p) % p; }
 
@@ -52,21 +51,22 @@ function generateSequence(basePoint, privateKey) {
 // ==========================================
 // --- STEP 3: INTERACTIVE UI & ANIMATION ---
 // ==========================================
-let currentInterval = null;
+let currentInterval = null; // Timer per fermare animazioni precedenti
 
 function runCalculation() {
-    // Read new inputs
-    const gx = parseInt(document.getElementById('base-point-x').value);
-    const gy = parseInt(document.getElementById('base-point-y').value);
-    const baseG = [gx, gy];
+    // 1. Leggi i dati di input dell'utente
+    const bpValue = document.getElementById('base-point-select').value;
+    const baseG = bpValue.split(',').map(Number);
     const privateK = parseInt(document.getElementById('private-key-input').value);
 
+    // 2. Calcola la matematica
     const eccSequence = generateSequence(baseG, privateK);
     const toyPublicKey = eccSequence[eccSequence.length - 1].point;
 
+    // 3. Aggiorna l'interfaccia HTML
     const listElement = document.getElementById('points-list');
     const outputElement = document.getElementById('public-key-output');
-    listElement.innerHTML = '';
+    listElement.innerHTML = ''; // Pulisce lista vecchia
 
     eccSequence.forEach(item => {
         let li = document.createElement('li');
@@ -78,6 +78,7 @@ function runCalculation() {
     let pkStr = (toyPublicKey === O) ? "Infinity" : `[${toyPublicKey[0]}, ${toyPublicKey[1]}]`;
     outputElement.textContent = pkStr;
 
+    // 4. Esegui il Canvas e l'Animazione
     const canvas = document.getElementById('ecc-canvas');
     const ctx = canvas.getContext('2d');
     const scale = 20, padding = 30;
@@ -88,7 +89,7 @@ function runCalculation() {
         for (let i = 0; i <= P; i++) {
             ctx.beginPath(); ctx.moveTo(padding + i * scale, padding); ctx.lineTo(padding + i * scale, padding + P * scale); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(padding, padding + i * scale); ctx.lineTo(padding + P * scale, padding + i * scale); ctx.stroke();
-            ctx.fillStyle = '#cccccc'; ctx.font = '10px Arial';
+            ctx.fillStyle = '#888'; ctx.font = '10px Arial';
             if (i % 2 === 0) {
                 ctx.fillText(i, padding + i * scale - 4, padding + P * scale + 15);
                 ctx.fillText(P - i, padding - 20, padding + i * scale + 4);
@@ -99,7 +100,7 @@ function runCalculation() {
     function drawAllValidPoints() {
         ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
         for (let x = 0; x < P; x++) {
-            let rhs = mod(x * x * x + A * x + B, P);
+            let rhs = mod(x * x * x + 7, P);
             for (let y = 0; y < P; y++) {
                 if (mod(y * y, P) === rhs) {
                     ctx.beginPath(); ctx.arc(padding + x * scale, padding + (P - y) * scale, 3, 0, Math.PI * 2); ctx.fill();
@@ -111,6 +112,7 @@ function runCalculation() {
     drawGrid();
     drawAllValidPoints();
 
+    // Ferma eventuali animazioni vecchie se l'utente clicca velocemente
     if (currentInterval) clearInterval(currentInterval);
 
     let step = 0;
@@ -121,22 +123,17 @@ function runCalculation() {
         }
         let pt = eccSequence[step].point;
         if (pt !== O) {
-            ctx.fillStyle = (step === eccSequence.length - 1) ? '#03dac6' : '#bb86fc';
+            ctx.fillStyle = (step === eccSequence.length - 1) ? '#50fa7b' : '#ff79c6';
             ctx.beginPath(); ctx.arc(padding + pt[0] * scale, padding + (P - pt[1]) * scale, 6, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Courier';
             ctx.fillText(`${step+1}G`, padding + pt[0] * scale + 8, padding + (P - pt[1]) * scale - 8);
         }
         step++;
-    }, 800);
+    }, 800); // Velocità animazione
 }
 
-// Function to update global curve variables
-function updateCurve() {
-    A = parseInt(document.getElementById('val-a').value);
-    B = parseInt(document.getElementById('val-b').value);
-    P = parseInt(document.getElementById('val-p').value);
-    runCalculation();
-}
-
+// Collega il bottone HTML alla funzione Javascript
 document.getElementById('calculate-btn').addEventListener('click', runCalculation);
+
+// Esegui un calcolo iniziale di default appena si apre la pagina
 runCalculation();
