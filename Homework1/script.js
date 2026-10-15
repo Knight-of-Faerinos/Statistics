@@ -48,6 +48,66 @@ function generateSequence(basePoint, privateKey) {
     return sequence;
 }
 
+// Funzione per generare la tabella statistica (Avalanche Effect)
+function generateStatisticalExploration(basePoint) {
+    let tableBody = document.getElementById("stats-table-body");
+    tableBody.innerHTML = "";
+    
+    let previousBinary = "";
+    let maxK = 18; // Ordine stimato del sottogruppo per questa toy curve
+    let currentPoint = basePoint;
+    
+    for(let k = 1; k <= maxK; k++) {
+        
+        // Gestione del punto all'infinito
+        if (currentPoint === O) {
+             let row = `<tr>
+                <td><strong>${k}</strong></td>
+                <td>Infinity</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>`;
+            tableBody.innerHTML += row;
+             // Per continuare la sequenza, il prossimo sarà di nuovo il basePoint
+            currentPoint = basePoint;
+            previousBinary = ""; // Reset del confronto
+            continue;
+        }
+
+        let currentX = currentPoint[0];
+        let currentY = currentPoint[1];
+
+        // Converte in binario a 5 bit (poiché il max è 17)
+        let xBin = currentX.toString(2).padStart(5, '0');
+        let yBin = currentY.toString(2).padStart(5, '0');
+        let currentBinary = xBin + yBin; // Stringa di 10 bit
+        
+        let bitFlips = 0;
+        if(previousBinary !== "") {
+            // Calcola la Distanza di Hamming (Bit cambiati)
+            for(let i = 0; i < 10; i++) {
+                if(currentBinary[i] !== previousBinary[i]) bitFlips++;
+            }
+        }
+
+        let row = `<tr>
+            <td><strong>${k}</strong></td>
+            <td>(${currentX}, ${currentY})</td>
+            <td><code>${xBin}</code></td>
+            <td><code>${yBin}</code></td>
+            <td>${previousBinary === "" ? '-' : `<span style="color: #ffb86c; font-weight: bold;">${bitFlips} / 10 bits</span>`}</td>
+        </tr>`;
+        tableBody.innerHTML += row;
+
+        previousBinary = currentBinary;
+        
+        // Calcola il prossimo punto della sequenza
+        currentPoint = addPoints(currentPoint, basePoint);
+    }
+}
+
+
 // ==========================================
 // --- STEP 3: INTERACTIVE UI & ANIMATION ---
 // ==========================================
@@ -58,6 +118,9 @@ function runCalculation() {
     const bpValue = document.getElementById('base-point-select').value;
     const baseG = bpValue.split(',').map(Number);
     const privateK = parseInt(document.getElementById('private-key-input').value);
+
+    // Aggiorna la tabella statistica con il nuovo punto base
+    generateStatisticalExploration(baseG);
 
     // 2. Calcola la matematica
     const eccSequence = generateSequence(baseG, privateK);
