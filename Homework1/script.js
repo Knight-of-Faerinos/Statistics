@@ -4,7 +4,7 @@
 let P = 17; 
 let A = 0; 
 let B = 7;
-let O = "O"; 
+let O = "O";
 
 function mod(n, p) { return ((n % p) + p) % p; }
 
