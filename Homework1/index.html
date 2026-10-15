@@ -11,48 +11,24 @@
     <div class="container">
       <h1>Interactive Toy ECC: G &rarr; kG</h1>
       
-      <!-- DASHBOARD CONTROLS -->
-      <div class="dashboard-panel">
-          <div class="dash-row">
-              <div class="dash-inputs">
-                  <div class="input-block">
-                      <label>PARAM a</label>
-                      <input type="number" id="val-a" value="0">
-                  </div>
-                  <div class="input-block">
-                      <label>PARAM b</label>
-                      <input type="number" id="val-b" value="7">
-                  </div>
-                  <div class="input-block">
-                      <label>PRIME (p)</label>
-                      <input type="number" id="val-p" value="17">
-                  </div>
-              </div>
-              <button id="update-curve-btn" class="dash-btn outline-btn" onclick="updateCurve()">Update Curve</button>
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="dash-row">
-              <div class="dash-inputs">
-                  <div class="input-block">
-                      <label>BASE G (X)</label>
-                      <input type="number" id="base-point-x" value="1">
-                  </div>
-                  <div class="input-block">
-                      <label>BASE G (Y)</label>
-                      <input type="number" id="base-point-y" value="5">
-                  </div>
-                  <div class="input-block">
-                      <label>PRIV KEY (k)</label>
-                      <input type="number" id="private-key-input" value="6" min="1" max="20">
-                  </div>
-              </div>
-              <button id="calculate-btn" class="dash-btn solid-btn">Calculate Key</button>
-          </div>
+      <div class="controls-box">
+        <p><strong>Curve:</strong> y² = x³ + 7 (mod 17)</p>
+        <div class="inputs-row">
+            <label>Base Point (G): 
+                <select id="base-point-select">
+                    <option value="1,5" selected>[1, 5]</option>
+                    <option value="2,10">[2, 10]</option>
+                    <option value="5,8">[5, 8]</option>
+                    <option value="15,13">[15, 13]</option>
+                </select>
+            </label>
+            <label>Private Key (k): 
+                <input type="number" id="private-key-input" value="6" min="1" max="20">
+            </label>
+            <button id="calculate-btn">Calculate Key</button>
+        </div>
       </div>
       
-      <!-- RESULTS & CANVAS -->
       <div class="layout">
         <div class="text-results">
           <h2>Sequence:</h2>
@@ -64,36 +40,16 @@
         </div>
         
         <div class="canvas-container">
-          <h2>Visual Representation</h2>
+          <h2>Visual Representation </h2>
           <canvas id="ecc-canvas" width="400" height="400"></canvas> 
         </div>
       </div>
 
-      <!-- ACADEMIC EXPLANATION -->
       <div class="explanation-box">
-          <h2>Statistical Exploration & Cryptographic Discussion</h2>
-          
-          <div class="stat-grid">
-              <div class="stat-card">
-                  <h3>1. Distribution & Periodicity</h3>
-                  <p>Observing the outputs for k = 1...8 with generator G = [1, 5], we notice strict constraints. The sequence is finite and cyclical[cite: 5]. The order of G is 9, meaning 9G = O (infinity)[cite: 5]. Coordinates are not uniform over [0, 16][cite: 5]. Because of the y² symmetry, every x is shared by two opposite y-coordinates[cite: 5], completely skewing the frequency distribution[cite: 5].</p>
-              </div>
-
-              <div class="stat-card">
-                  <h3>2. Avalanche Effect & Entropy</h3>
-                  <p>Hashes (like SHA-256) demand a ~50% Avalanche Effect[cite: 5]. If we shift the key from <strong>k = 6 (00110)</strong> to <strong>k = 7 (00111)</strong>:</p>
-                  <ul>
-                      <li>6G = [5, 8] (00101 | 01000)</li>
-                      <li>7G = [10, 15] (01010 | 01111)</li>
-                  </ul>
-                  <p>7 out of 10 bits flipped (70%). While this seems hash-like, output entropy is extremely low (max ~4 bits)[cite: 5]. The high bit-flip is an artifact of the small modulo, not true cryptographic randomness.</p>
-              </div>
-
-              <div class="stat-card">
-                  <h3>3. Algebraic Structure vs Hashes</h3>
-                  <p>Elliptic curves are <strong>not</strong> hashes[cite: 5]. They preserve a strict algebraic group structure where <em>(a+b)G = aG + bG</em>[cite: 5]. This homomorphism allows digital signatures (ECDSA) to work[cite: 5]. Security relies entirely on the <strong>Elliptic Curve Discrete Logarithm Problem (ECDLP)</strong>[cite: 5]. On <em>secp256k1</em>, the vast group order ($\approx 2^{256}$) makes generic attacks infeasible[cite: 5].</p>
-              </div>
-          </div>
+          <h2>How it Works & Statistical Exploration</h2>
+          <p><strong>1. The Math:</strong> In elliptic curve cryptography, we don't multiply numbers normally. To find $kG$ (Public Key), we start at the Base Point $G$ and mathematically "add" it to itself $k$ times using finite field geometry modulo 17.</p>
+          <p><strong>2. The Avalanche Effect:</strong> Try changing the Private Key slightly (e.g., from 6 to 7). Notice how the final Public Key jumps to a completely unpredictable new location. This lack of input-output correlation is why recovering the private key from the public key (ECDLP) is computationally difficult.</p>
+          <p><strong>3. Hashes vs ECC:</strong> While hashes (like SHA-256) destroy all mathematical structure to create a random fingerprint, ECC maintains a strict algebraic group structure. This structure is what allows us to create digital signatures (like in Ethereum) while still acting as a cryptographic one-way function.</p>
       </div>
     </div>
 
