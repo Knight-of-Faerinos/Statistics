@@ -40,3 +40,31 @@ canvas { background-color: #1e1e29; border-radius: 8px; border: 1px solid #444; 
     margin-top: 30px; background-color: #1e1e29; padding: 20px;
     border-radius: 8px; border-left: 4px solid #bd93f9; font-size: 0.9em;
 }
+
+/* Nuovi stili per la sezione statistica */
+.statistics-section {
+    margin-top: 30px;
+    background-color: #1e1e29;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #f1fa8c; /* Colore giallo per distinguerla */
+}
+
+table {
+    border-color: #444;
+}
+
+thead th {
+    background-color: #2c3e50; /* Colore dell'intestazione tabella */
+}
+
+tbody td {
+    border-color: #333;
+}
+
+code {
+    background-color: #252533;
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: #f8f8f2;
+}
