@@ -1,50 +1,31 @@
 // ==========================================
-// 1. SECP256K1 CURVE PARAMETERS (BigInt)
+// 1. TOY ECC MATH CORE
 // ==========================================
-// The secp256k1 curve is defined by y^2 = x^3 + ax + b over the finite field Fp.
-// For secp256k1: a = 0, b = 7
-
-// The prime modulus p
-const P = 115792089237316195423570985008687907853269984665640564039457584007908834671663n;
-const A = 0n;
+// Curve: y^2 = x^3 + 7 mod 17
+const P = 17; 
+const A = 0; 
 const O = "O"; // Point at infinity
+const baseG = [15, 13]; // Generator Point G
 
-// The Generator point G (x, y)
-const G = [
-    55066263022277343669578718895168534326250603453777594175500187360389116729240n,
-    32670510020758816978083085130507043184471273380659243275938904335757337482424n
-];
-
-// ==========================================
-// 2. MODULAR ARITHMETIC CORE
-// ==========================================
-
-// Custom modulo function to handle negative numbers in JS correctly with BigInt
-function mod(n, p) {
-    return ((n % p) + p) % p;
+// Custom modulo function to handle negative numbers
+function mod(n, p) { 
+    return ((n % p) + p) % p; 
 }
 
-// Modular inverse using Fermat's Little Theorem (a^(p-2) mod p == a^-1 mod p)
-// since P is a prime number.
+// Modular inverse using Fermat's Little Theorem
 function modInverse(a, p) {
     a = mod(a, p);
-    if (a === 0n) return 0n; // Avoid silent crash on division by zero
-    
-    let res = 1n;
-    let power = a;
-    let exponent = p - 2n;
-    
-    while (exponent > 0n) {
-        if (exponent % 2n === 1n) {
-            res = mod(res * power, p);
-        }
+    if (a === 0) return 0;
+    let res = 1, power = a, exponent = p - 2;
+    while (exponent > 0) {
+        if (exponent % 2 === 1) res = mod(res * power, p);
         power = mod(power * power, p);
-        exponent /= 2n;
+        exponent = Math.floor(exponent / 2);
     }
     return res;
 }
 
-// Elliptic Curve Point Addition: R = P1 + P2
+// Elliptic Curve Point Addition
 function addPoints(p1, p2) {
     if (p1 === O) return p2;
     if (p2 === O) return p1;
@@ -52,16 +33,16 @@ function addPoints(p1, p2) {
     let x1 = p1[0], y1 = p1[1];
     let x2 = p2[0], y2 = p2[1];
     
-    // If points are vertically aligned, the result is the point at infinity
+    // Vertical tangent (Result is infinity)
     if (x1 === x2 && mod(y1, P) === mod(-y2, P)) return O;
 
-    let m; // Slope of the line intersecting the curve
+    let m;
     if (x1 !== x2) {
-        // Point addition (P1 != P2)
+        // P1 != P2
         m = mod(mod(y2 - y1, P) * modInverse(mod(x2 - x1, P), P), P);
     } else {
-        // Point doubling (P1 == P2)
-        m = mod(mod(3n * x1 * x1 + A, P) * modInverse(mod(2n * y1, P), P), P);
+        // P1 == P2 (Point doubling)
+        m = mod(mod(3 * x1 * x1 + A, P) * modInverse(mod(2 * y1, P), P), P);
     }
     
     let x3 = mod(m * m - x1 - x2, P);
@@ -70,110 +51,110 @@ function addPoints(p1, p2) {
     return [x3, y3];
 }
 
-// Elliptic Curve Scalar Multiplication: R = k * P (Double and Add algorithm)
+// Elliptic Curve Scalar Multiplication (Double and Add)
 function scalarMultiply(k, P_point) {
     let result = O;
     let currentPoint = P_point;
-    let tempK = BigInt(k); // Ensure k is a BigInt
+    let tempK = k;
     
-    while (tempK > 0n) {
-        if (tempK % 2n === 1n) {
-            result = addPoints(result, currentPoint);
-        }
+    while (tempK > 0) {
+        if (tempK % 2 === 1) result = addPoints(result, currentPoint);
         currentPoint = addPoints(currentPoint, currentPoint);
-        tempK /= 2n;
+        tempK = Math.floor(tempK / 2);
     }
     return result;
 }
 
+
 // ==========================================
-// 3. TOY ENCRYPTION USING ECIES CONCEPT
+// 2. TOY ECC ENCRYPTION / DECRYPTION
 // ==========================================
-// We use a simplified ElGamal/ECIES approach. We generate a Shared Secret Point.
-// We use the X-coordinate of the secret to perform a Caesar-style shift on the text.
 
 function eccEncrypt() {
-    // 1. Fetch input values (Convert to BigInt for cryptographic operations)
-    const bobPrivKStr = document.getElementById('ecc-bob-k').value;
-    const aliceRandRStr = document.getElementById('ecc-alice-r').value;
+    // 1. Get input parameters from UI
+    // Note: private keys are small (1 to 17) to fit the toy scheme
+    const bobPrivK = parseInt(document.getElementById('ecc-bob-k').value);
+    const aliceRandR = parseInt(document.getElementById('ecc-alice-r').value);
     const message = document.getElementById('ecc-message').value.toUpperCase();
 
-    if (!bobPrivKStr || !aliceRandRStr) {
-        alert("Please enter both keys!");
+    // 2. Recipient (Bob) generates Public Key Q = k * G
+    const bobPubQ = scalarMultiply(bobPrivK, baseG);
+    if (bobPubQ === O) {
+        alert("Bob's key generates the Point at Infinity. Choose another 'k'.");
         return;
     }
 
-    const bobPrivK = BigInt(bobPrivKStr);
-    const aliceRandR = BigInt(aliceRandRStr);
+    // 3. Sender (Alice) computes Ephemeral Point R = r * G (To be sent publicly)
+    const alicePointR = scalarMultiply(aliceRandR, baseG);
+    if (alicePointR === O) {
+        alert("Alice's key generates the Point at Infinity. Choose another 'r'.");
+        return;
+    }
 
-    // 2. Bob calculates his Public Key (Q = k * G)
-    const bobPubQ = scalarMultiply(bobPrivK, G);
-    
-    // 3. Alice calculates the Ephemeral Point to send to Bob (R = r * G)
-    const alicePointR = scalarMultiply(aliceRandR, G);
-    
-    // 4. Alice calculates the Shared Secret Point (S = r * Q)
+    // 4. Sender (Alice) computes Shared Secret S = r * Q
     const sharedSecret = scalarMultiply(aliceRandR, bobPubQ);
-    
-    // 5. Encrypt the message using the X coordinate of the Shared Secret
-    // We reduce the massive BigInt to a small number (modulo 26) to shift the alphabet
-    const shiftKey = Number(sharedSecret[0] % 26n); 
+    if (sharedSecret === O) {
+        alert("Shared Secret is the Point at Infinity. Change keys.");
+        return;
+    }
+
+    // 5. Encrypt message using the X-coordinate of the Shared Secret as a shift key
+    const shiftKey = sharedSecret[0]; 
     
     let ciphertext = "";
     for (let i = 0; i < message.length; i++) {
         let charCode = message.charCodeAt(i);
-        if (charCode >= 65 && charCode <= 90) { // A-Z only
+        if (charCode >= 65 && charCode <= 90) { // A-Z shift
             ciphertext += String.fromCharCode(((charCode - 65 + shiftKey) % 26) + 65);
         } else {
-            ciphertext += message[i]; // Leave spaces unchanged
+            ciphertext += message[i]; // Keep spaces
         }
     }
 
-    // 6. Display results on the UI
-    document.getElementById('ecc-bob-q').innerText = `[${bobPubQ[0].toString().substring(0, 10)}..., ...]`;
-    document.getElementById('ecc-alice-r-out').innerText = `[${alicePointR[0].toString().substring(0, 10)}..., ...]`;
-    document.getElementById('ecc-secret-out').innerText = `Shift +${shiftKey} (Derived from Secret X)`;
+    // 6. Output to UI
+    document.getElementById('ecc-bob-q').innerText = `[${bobPubQ[0]}, ${bobPubQ[1]}]`;
+    document.getElementById('ecc-alice-r-out').innerText = `[${alicePointR[0]}, ${alicePointR[1]}]`;
+    document.getElementById('ecc-secret-out').innerText = `Shift +${shiftKey}`;
     document.getElementById('ecc-cipher-out').innerText = ciphertext;
 
-    // Store data needed for decryption in the DOM
+    // Save temporary data in DOM for the Decrypt function
     document.dataset = { 
         cipher: ciphertext, 
-        rx: alicePointR[0].toString(), 
-        ry: alicePointR[1].toString() 
+        rx: alicePointR[0], 
+        ry: alicePointR[1] 
     };
 }
 
 function eccDecrypt() {
-    // 1. Fetch the stored ciphertext and Bob's private key
-    const bobPrivKStr = document.getElementById('ecc-bob-k').value;
+    // 1. Fetch data
+    const bobPrivK = parseInt(document.getElementById('ecc-bob-k').value);
     const ciphertext = document.dataset?.cipher;
     
     if (!ciphertext) {
-        alert("You must encrypt a message first!");
+        alert("Please encrypt a message first!");
         return;
     }
 
-    const bobPrivK = BigInt(bobPrivKStr);
-    const pointR = [BigInt(document.dataset.rx), BigInt(document.dataset.ry)];
+    const pointR = [parseInt(document.dataset.rx), parseInt(document.dataset.ry)];
 
-    // 2. Bob calculates the Shared Secret Point using his private key and Alice's point (S = k * R)
+    // 2. Recipient (Bob) recalculates the Shared Secret S = k * R
     const sharedSecret = scalarMultiply(bobPrivK, pointR);
     
-    // 3. Extract the same shift key (modulo 26) from the X coordinate
-    const shiftKey = Number(sharedSecret[0] % 26n);
+    // Extract the same shift key (X-coordinate)
+    const shiftKey = sharedSecret[0];
 
-    // 4. Decrypt the message by shifting backwards
+    // 3. Decrypt by shifting backwards
     let plaintext = "";
     for (let i = 0; i < ciphertext.length; i++) {
         let charCode = ciphertext.charCodeAt(i);
         if (charCode >= 65 && charCode <= 90) {
-            // Add 26 before modulo to handle negative JS numbers properly
+            // Add 26 to handle negative modulo in JS
             plaintext += String.fromCharCode(((charCode - 65 - shiftKey + 26) % 26) + 65);
         } else {
             plaintext += ciphertext[i];
         }
     }
 
-    // 5. Display the decrypted message
+    // 4. Output to UI
     document.getElementById('ecc-plain-out').innerText = plaintext;
 }
