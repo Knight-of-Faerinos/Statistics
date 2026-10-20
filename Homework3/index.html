@@ -66,6 +66,22 @@
             <p><strong>Caesar Ciphertext:</strong> <span class="highlight" id="caesar-cipher-out" style="color: #f38ba8;">-</span></p>
             <p><strong>Decrypted Text:</strong> <span class="highlight" id="caesar-plain-out" style="color: #f9e2af;">-</span></p>
         </div>
+        <hr class="section-divider">
+
+        <!-- SECTION 3: STATISTICAL CRYPTANALYSIS OF CAESAR CIPHER -->
+        <h2>3. Statistical Cryptanalysis of Caesar Cipher</h2>
+        <p>Recovers the key by assuming the most frequent letter in the ciphertext corresponds to 'E'.</p>
+
+        <label>Ciphertext to Analyze:</label>
+        <textarea id="caesar-attack-input" rows="3">WKIV IV D FUBSWRJUDSKLF WHVW PHVVDJH WR GHPRQVWUDWH HQFUBSWLRQ</textarea>
+        
+        <button onclick="caesarStatisticalAttack()">Run Statistical Attack</button>
+
+        <div class="box">
+            <p>Most Frequent Letter Found: <span class="highlight" id="stat-most-freq">-</span></p>
+            <p>Recovered Shift Key: <span class="danger" id="stat-recovered-key">-</span></p>
+            <p><strong>Recovered Plaintext:</strong> <span class="highlight" id="stat-decrypted-text" style="color: #f9e2af;">-</span></p>
+        </div>
 
     </div> <!-- Chiusura corretta del container qui -->
 
