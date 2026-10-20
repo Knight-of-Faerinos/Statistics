@@ -158,3 +158,63 @@ function eccDecrypt() {
     // 4. Output to UI
     document.getElementById('ecc-plain-out').innerText = plaintext;
 }
+// ==========================================
+// 3. CAESAR CIPHER IMPLEMENTATION
+// ==========================================
+
+function caesarEncrypt() {
+    // Fetch input parameters
+    const key = parseInt(document.getElementById('caesar-key').value);
+    const message = document.getElementById('caesar-message').value.toUpperCase();
+
+    if (isNaN(key) || key < 1 || key > 25) {
+        alert("Please enter a valid key between 1 and 25.");
+        return;
+    }
+
+    // Encrypt by shifting characters forward in the alphabet
+    let ciphertext = "";
+    for (let i = 0; i < message.length; i++) {
+        let charCode = message.charCodeAt(i);
+        if (charCode >= 65 && charCode <= 90) { // A-Z ASCII
+            ciphertext += String.fromCharCode(((charCode - 65 + key) % 26) + 65);
+        } else {
+            ciphertext += message[i]; // Preserve spaces and punctuation
+        }
+    }
+
+    // Output to UI
+    document.getElementById('caesar-cipher-out').innerText = ciphertext;
+
+    // Store the ciphertext in the DOM dataset for decryption
+    document.dataset = { 
+        ...document.dataset, 
+        caesarCiphertext: ciphertext 
+    };
+}
+
+function caesarDecrypt() {
+    // Fetch input parameters
+    const key = parseInt(document.getElementById('caesar-key').value);
+    const ciphertext = document.dataset?.caesarCiphertext;
+
+    if (!ciphertext) {
+        alert("Please encrypt a message first using the Caesar Cipher!");
+        return;
+    }
+
+    // Decrypt by shifting characters backward in the alphabet
+    let plaintext = "";
+    for (let i = 0; i < ciphertext.length; i++) {
+        let charCode = ciphertext.charCodeAt(i);
+        if (charCode >= 65 && charCode <= 90) { // A-Z ASCII
+            // Add 2600 to ensure a positive modulo result in JS
+            plaintext += String.fromCharCode(((charCode - 65 - key + 2600) % 26) + 65);
+        } else {
+            plaintext += ciphertext[i];
+        }
+    }
+
+    // Output to UI
+    document.getElementById('caesar-plain-out').innerText = plaintext;
+}
