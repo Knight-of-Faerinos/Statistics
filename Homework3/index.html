@@ -13,16 +13,19 @@
         input { padding: 8px; border-radius: 4px; border: 1px solid #585b70; background-color: #181825; color: #cdd6f4; width: 100%; box-sizing: border-box; margin-bottom: 10px; font-family: inherit;}
         .highlight { color: #a6e3a1; font-weight: bold; }
         .box { background-color: #181825; padding: 15px; border-left: 3px solid #f38ba8; margin-top: 15px; }
+        hr.section-divider { border: 0; height: 1px; background: #585b70; margin: 40px 0; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Homework 2: Toy ECC Encryption</h1>
+        <h1>Homework 2: Cryptographic Schemes</h1>
+
+        <!-- SECTION 1: ECC -->
+        <h2>1. Toy ECC Encryption</h2>
         <p>Using the finite field <strong>Z_17</strong> and curve <strong>y² = x³ + 7</strong> from Part 1.</p>
         <p><em>Note: Keys must be small integers (e.g., 1 to 16) due to the restricted field size.</em></p>
 
-        <h2>1. Parameters & Encryption</h2>
         <label>Message:</label>
         <input type="text" id="ecc-message" value="HELLO WORLD">
         
@@ -35,7 +38,6 @@
         <button onclick="eccEncrypt()">Encrypt Message</button>
         <button onclick="eccDecrypt()">Decrypt Message</button>
 
-        <h2>2. Cryptographic Output</h2>
         <div class="box">
             <p>Bob's Public Key (Q): <span class="highlight" id="ecc-bob-q">-</span></p>
             <p>Alice's Ephemeral Point (R) to transmit: <span class="highlight" id="ecc-alice-r-out">-</span></p>
@@ -44,7 +46,28 @@
             <p><strong>Ciphertext:</strong> <span class="highlight" id="ecc-cipher-out" style="color: #f38ba8;">-</span></p>
             <p><strong>Decrypted Text:</strong> <span class="highlight" id="ecc-plain-out" style="color: #f9e2af;">-</span></p>
         </div>
-    </div>
+
+        <hr class="section-divider">
+
+        <!-- SECTION 2: CAESAR CIPHER -->
+        <h2>2. The Caesar Cipher</h2>
+        <p>A classic monoalphabetic substitution cipher shifting characters by a fixed key.</p>
+
+        <label>Message (Same as above):</label>
+        <input type="text" id="caesar-message" value="HELLO WORLD">
+        
+        <label>Shift Key (Range 1-25):</label>
+        <input type="number" id="caesar-key" value="3" min="1" max="25">
+        
+        <button onclick="caesarEncrypt()">Encrypt (Caesar)</button>
+        <button onclick="caesarDecrypt()">Decrypt (Caesar)</button>
+
+        <div class="box">
+            <p><strong>Caesar Ciphertext:</strong> <span class="highlight" id="caesar-cipher-out" style="color: #f38ba8;">-</span></p>
+            <p><strong>Decrypted Text:</strong> <span class="highlight" id="caesar-plain-out" style="color: #f9e2af;">-</span></p>
+        </div>
+
+    </div> <!-- Chiusura corretta del container qui -->
 
     <!-- Script -->
     <script src="hw2_script.js"></script>
