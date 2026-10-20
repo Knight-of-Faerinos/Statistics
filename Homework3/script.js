@@ -257,16 +257,30 @@ function caesarStatisticalAttack() {
         }
     }
 
-    // 3. Assume the most frequent letter corresponds to 'E' (ASCII 69, index 4)
+// 3. Assume the most frequent letter corresponds to 'E'
     let maxCharCode = maxChar.charCodeAt(0);
-    let recoveredKey = (maxCharCode - 65 - (69 - 65) + 26) % 26;
+    let codeForE = 69; // 'E' in ASCII
+
+    // Calcolo corretto della chiave recuperata
+    let recoveredKey = (maxCharCode - codeForE);
+    
+    // Gestione dei numeri negativi per la chiave
+    if (recoveredKey < 0) {
+        recoveredKey = recoveredKey + 26;
+    }
 
     // 4. Decrypt using the recovered key
     let plaintext = "";
     for (let i = 0; i < ciphertext.length; i++) {
         let code = ciphertext.charCodeAt(i);
         if (code >= 65 && code <= 90) {
-            plaintext += String.fromCharCode(((code - 65 - recoveredKey + 2600) % 26) + 65);
+            // Sottrazione della chiave corretta con gestione del modulo JS
+            let shifted = code - 65 - recoveredKey;
+            // Aggiungo un multiplo di 26 per evitare valori negativi prima del modulo
+            while (shifted < 0) {
+                shifted += 26;
+            }
+            plaintext += String.fromCharCode((shifted % 26) + 65);
         } else {
             plaintext += ciphertext[i];
         }
