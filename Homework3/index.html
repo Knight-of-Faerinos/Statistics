@@ -83,6 +83,18 @@
             <p><strong>Recovered Plaintext:</strong> <span class="highlight" id="stat-decrypted-text" style="color: #f9e2af;">-</span></p>
         </div>
 
+        <!-- SECTION 4: BRUTE-FORCE ATTACK ON TOY ECC -->
+        <h2>4. Brute-Force Attack on Toy ECC Scheme</h2>
+        <p>Exploits the restricted private key space (1-16) to recover private key k from public key Q.</p>
+
+        <button onclick="eccBruteForceAttack()">Run ECC Brute-Force Attack</button>
+
+        <div class="box">
+            <p>Key Search Attempts: <span class="highlight" id="ecc-attack-attempts">-</span></p>
+            <p>Recovered Private Key (k): <span class="danger" id="ecc-recovered-k">-</span></p>
+            <p><strong>Decrypted Message using Recovered Key:</strong> <span class="highlight" id="ecc-attack-plaintext" style="color: #f9e2af;">-</span></p>
+        </div>
+
     </div> <!-- Chiusura corretta del container qui -->
 
     <!-- Script -->
