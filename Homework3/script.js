@@ -218,3 +218,62 @@ function caesarDecrypt() {
     // Output to UI
     document.getElementById('caesar-plain-out').innerText = plaintext;
 }
+
+// ==========================================
+// 4. STATISTICAL CRYPTANALYSIS OF CAESAR CIPHER
+// ==========================================
+
+function caesarStatisticalAttack() {
+    const ciphertext = document.getElementById('caesar-attack-input').value.toUpperCase();
+    if (!ciphertext.trim()) {
+        alert("Please enter or generate a ciphertext to attack!");
+        return;
+    }
+
+    // 1. Count letter frequencies
+    let counts = {};
+    let totalLetters = 0;
+    for (let i = 0; i < ciphertext.length; i++) {
+        let code = ciphertext.charCodeAt(i);
+        if (code >= 65 && code <= 90) { // A-Z ASCII
+            let char = ciphertext[i];
+            counts[char] = (counts[char] || 0) + 1;
+            totalLetters++;
+        }
+    }
+
+    if (totalLetters === 0) {
+        alert("Ciphertext contains no alphabetic letters!");
+        return;
+    }
+
+    // 2. Find the letter with the highest frequency
+    let maxChar = 'A';
+    let maxCount = 0;
+    for (let char in counts) {
+        if (counts[char] > maxCount) {
+            maxCount = counts[char];
+            maxChar = char;
+        }
+    }
+
+    // 3. Assume the most frequent letter corresponds to 'E' (ASCII 69, index 4)
+    let maxCharCode = maxChar.charCodeAt(0);
+    let recoveredKey = (maxCharCode - 65 - (69 - 65) + 26) % 26;
+
+    // 4. Decrypt using the recovered key
+    let plaintext = "";
+    for (let i = 0; i < ciphertext.length; i++) {
+        let code = ciphertext.charCodeAt(i);
+        if (code >= 65 && code <= 90) {
+            plaintext += String.fromCharCode(((code - 65 - recoveredKey + 2600) % 26) + 65);
+        } else {
+            plaintext += ciphertext[i];
+        }
+    }
+
+    // Output results to UI
+    document.getElementById('stat-most-freq').innerText = `'${maxChar}' (${maxCount} times out of ${totalLetters} letters)`;
+    document.getElementById('stat-recovered-key').innerText = recoveredKey;
+    document.getElementById('stat-decrypted-text').innerText = plaintext;
+}
