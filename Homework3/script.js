@@ -291,3 +291,67 @@ function caesarStatisticalAttack() {
     document.getElementById('stat-recovered-key').innerText = recoveredKey;
     document.getElementById('stat-decrypted-text').innerText = plaintext;
 }
+
+// ==========================================
+// 5. BRUTE-FORCE ATTACK ON TOY ECC SCHEME
+// ==========================================
+
+function eccBruteForceAttack() {
+    // 1. L'attaccante intercetta la Chiave Pubblica di Bob (Q)
+    // Per simulare l'intercettazione, la ricalcoliamo o la leggiamo dall'input
+    const bobPrivKReal = parseInt(document.getElementById('ecc-bob-k').value);
+    const targetQ = scalarMultiply(bobPrivKReal, baseG);
+
+    if (targetQ === O) {
+        alert("Target Public Key Q is at Infinity. Encrypt first!");
+        return;
+    }
+
+    let recoveredK = null;
+    let attempts = 0;
+
+    // 2. CICLO DI FORZA BRUTA: proviamo tutte le chiavi da 1 a 16
+    for (let candidateK = 1; candidateK < P; candidateK++) {
+        attempts++;
+        
+        // Calcoliamo la chiave pubblica per il candidato corrente
+        let candidateQ = scalarMultiply(candidateK, baseG);
+
+        // Se il punto generato è uguale al target Q intercettato, abbiamo trovato la chiave!
+        if (candidateQ !== O && candidateQ[0] === targetQ[0] && candidateQ[1] === targetQ[1]) {
+            recoveredK = candidateK;
+            break; // Ferma il ciclo, attacco riuscito
+        }
+    }
+
+    // 3. Mostra i risultati e decifra il messaggio intercettato
+    if (recoveredK !== null) {
+        document.getElementById('ecc-attack-attempts').innerText = `${attempts} / 16`;
+        document.getElementById('ecc-recovered-k').innerText = recoveredK;
+
+        // Recuperiamo i dati cifrati temporanei
+        const ciphertext = document.dataset?.cipher;
+        if (ciphertext && document.dataset?.rx) {
+            const pointR = [parseInt(document.dataset.rx), parseInt(document.dataset.ry)];
+            
+            // Decifriamo il messaggio usando la chiave rubata
+            const sharedSecret = scalarMultiply(recoveredK, pointR);
+            const shiftKey = sharedSecret[0];
+
+            let plaintext = "";
+            for (let i = 0; i < ciphertext.length; i++) {
+                let code = ciphertext.charCodeAt(i);
+                if (code >= 65 && code <= 90) {
+                    plaintext += String.fromCharCode(((code - 65 - shiftKey + 2600) % 26) + 65);
+                } else {
+                    plaintext += ciphertext[i];
+                }
+            }
+            document.getElementById('ecc-attack-plaintext').innerText = plaintext;
+        } else {
+            document.getElementById('ecc-attack-plaintext').innerText = "(Nessun messaggio intercettato in memoria)";
+        }
+    } else {
+        alert("Attack failed: key not found.");
+    }
+}
