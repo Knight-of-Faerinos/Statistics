@@ -155,10 +155,6 @@
                 
                 <li><strong>Why the scheme fails on a "real" curve like secp256k1:</strong> Our attack succeeds in a fraction of a millisecond because the computer has to execute the for loop a maximum of 16 times. This problem, mathematically known as the Elliptic Curve Discrete Logarithm Problem (ECDLP), is trivial on very small finite fields. 
                 <br>In a properly configured ECC scheme (e.g., Bitcoin/Ethereum with the real secp256k1), the finite field p and the subgroup order are numbers close to 2²⁵⁶. This creates a key space so vast (about 10⁷⁷ combinations) that executing an exhaustive for loop to calculate every possible kG would require all the supercomputers on Earth a time longer than the estimated age of the universe. The security of real ECC derives entirely from the computational intractability of this search.</li>
-                
-                <li><strong>Weaknesses of the Toy Scheme Design (Optional Task):</strong> Our toy implementation has a critical structural flaw beyond the small key space. Because we used the shared secret's X-coordinate merely as a fixed shift value (exactly like a Caesar cipher), <strong>the ciphertext retains the statistical properties of the plaintext</strong>. An attacker wouldn't even need to brute-force the elliptic curve keys; they could just use the statistical attack from Section 3 directly on the ECC ciphertext! Real ECC protocols solve this by feeding the shared secret into a Hash/KDF and using AES encryption.</li>
-            </ul>
-        </div>
 
     </div>
 
