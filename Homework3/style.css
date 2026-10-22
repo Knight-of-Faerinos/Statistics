@@ -1,1 +1,40 @@
+body {
+    background-color: #1a1a24; color: #d1d1e0;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 20px; margin: 0; line-height: 1.5;
+}
+.container {
+    max-width: 900px; margin: 0 auto;
+    background-color: #252533; padding: 25px;
+    border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+h1 { color: #ff79c6; text-align: center; margin-top: 0;}
+h2 { color: #8be9fd; font-size: 1.1em; border-bottom: 1px dashed #444; padding-bottom: 5px; margin-top: 40px;}
+h3 { color: #50fa7b; margin: 0 0 10px 0; font-size: 1.1em;}
 
+.controls-box {
+    background-color: #1e1e29; padding: 15px;
+    border-radius: 8px; border-left: 4px solid #ffb86c; margin-bottom: 20px;
+}
+.inputs-row { display: flex; gap: 20px; align-items: center; justify-content: flex-start; margin-top: 15px; flex-wrap: wrap;}
+input, select, textarea { background: #252533; color: #fff; border: 1px solid #444; padding: 8px 10px; border-radius: 4px; font-family: inherit;}
+textarea { width: 100%; box-sizing: border-box; }
+button { background: #bd93f9; color: #000; border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s;}
+button:hover { background: #ff79c6; }
+
+.result-box {
+    background-color: #1e1e29; padding: 15px;
+    border-radius: 8px; border-left: 4px solid #50fa7b;
+    margin-top: 15px;
+}
+
+.explanation-box {
+    margin-top: 20px; background-color: #1e1e29; padding: 20px;
+    border-radius: 8px; border-left: 4px solid #bd93f9; font-size: 0.9em;
+}
+.explanation-box ul { padding-left: 20px; margin-bottom: 0; }
+.explanation-box li { margin-bottom: 8px; }
+
+.highlight-data { font-size: 1.1em; font-weight: bold; color: #fff; }
+.danger-data { font-size: 1.1em; font-weight: bold; color: #ff5555; }
+.success-data { font-size: 1.1em; font-weight: bold; color: #50fa7b; }
