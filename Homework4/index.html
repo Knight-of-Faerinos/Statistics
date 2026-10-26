@@ -1,1 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 3: Stochastic Penetration Process</title>
+    
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Plotly.js via CDN for drawing the charts -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+</head>
+<body>
 
+    <header>
+        <h1>Homework 3: Stochastic Penetration Process</h1>
+        <p>Law of Large Numbers (LLN) & Central Limit Theorem (CLT) Simulation</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- CONTROL PANEL (User Inputs) -->
+        <aside class="controls">
+            <h2>Settings</h2>
+            
+            <div class="input-group">
+                <label for="modelSelect">Mathematical Model:</label>
+                <select id="modelSelect">
+                    <option value="bernoulli">Bernoulli (0, 1)</option>
+                    <option value="rademacher">Rademacher (-1, +1)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="inputN">Number of Systems (n):</label>
+                <input type="number" id="inputN" value="1000" min="10">
+            </div>
+
+            <div class="input-group">
+                <label for="inputM">Number of Attackers (m):</label>
+                <input type="number" id="inputM" value="50" min="1">
+            </div>
+
+            <div class="input-group">
+                <label for="inputP">Probability (p) - Bernoulli only:</label>
+                <input type="number" id="inputP" value="0.5" min="0" max="1" step="0.1">
+            </div>
+
+            <button id="startBtn">Run Simulation</button>
+        </aside>
+
+        <!-- CHARTS SECTION -->
+        <main class="charts-section">
+            
+            <!-- Chart 1: Total Score (S_n) -->
+            <div class="chart-box">
+                <h3>Total Score (Sₙ)</h3>
+                <p>Observe how trajectories diverge and variance grows as <em>n</em> increases.</p>
+                <div id="chartTotal"></div> 
+            </div>
+
+            <!-- Chart 2: Average Score (S_n / n) -->
+            <div class="chart-box">
+                <h3>Average Score (Sₙ / n)</h3>
+                <p>Convergence to the expected value in probability (Law of Large Numbers).</p>
+                <div id="chartAverage"></div>
+            </div>
+
+            <!-- Chart 3: Normalized Score (S_n / √n) -->
+            <div class="chart-box">
+                <h3>Normalized Total Score (Sₙ / √n)</h3>
+                <p>Variance stabilizes and converges in distribution to a standard normal (Central Limit Theorem).</p>
+                <div id="chartNormalized"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Link to the JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
