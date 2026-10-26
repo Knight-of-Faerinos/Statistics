@@ -47,10 +47,10 @@
 
       <div class="statistics-section">
           <h2>Statistical Data: Point Distribution & Avalanche Effect</h2>
-          <p>Di seguito esploriamo i risultati moltiplicando il punto G per k da 1 fino alla fine del gruppo ciclico. Osserviamo la rappresentazione binaria (a 5-bit) per misurare l'<strong>Avalanche Effect</strong> (quanti bit cambiano incrementando k di 1).</p>
+          <p>Below we explore the results of multiplying the point G by k from 1 up to the end of the cyclic group. We observe the binary representation (5-bit) to measure the <strong>Avalanche Effect</strong> (how many bits change when incrementing k by 1).</p>
           
-          <table border="1" cellpadding="8" style="width: 100%; text-align: center; border-collapse: collapse; margin-top: 15px;">
-              <thead style="background-color: #2c3e50; color: white;">
+          <table border="1">
+              <thead>
                   <tr>
                       <th>k (Private Key)</th>
                       <th>Point kG (x, y)</th>
@@ -60,20 +60,20 @@
                   </tr>
               </thead>
               <tbody id="stats-table-body">
-                  <!-- Popolato via JS -->
+                  <!-- Populated via JS -->
               </tbody>
           </table>
       </div>
 
       <div class="explanation-box">
           <h2>4. Coordinate Distribution and Uniformity</h2>
-          <p>Sebbene l'equazione della curva ($y^2 = x^3 + 7$) segua regole algebriche precise, la restrizione al campo finito $\mathbb{Z}_{17}$ fa in modo che le coordinate dei punti risultanti 'rimbalzino' in modo non lineare. Analizzando i dati nella tabella, notiamo che la distribuzione delle coordinate x e y non segue una regressione lineare (nessuna correlazione diretta $y = mx + q$). Sebbene su questa 'Toy Curve' l'ordine del gruppo sia piccolo e i punti finiscano per formare un pattern ciclico, su curve reali come la <code>secp256k1</code> di Ethereum, questo comportamento genera un'apparente uniformità pseudo-casuale, essenziale per nascondere la chiave privata.</p>
+          <p>Although the curve equation ($y^2 = x^3 + 7$) follows precise algebraic rules, the restriction to the finite field $\mathbb{Z}_{17}$ causes the resulting point coordinates to 'bounce' non-linearly. By analyzing the data in the table, we notice that the distribution of the x and y coordinates does not follow a linear regression (no direct correlation $y = mx + c$). Although on this 'Toy Curve' the group order is small and the points eventually form a cyclic pattern, on real curves like Ethereum's <code>secp256k1</code>, this behavior generates an apparent pseudo-random uniformity, which is essential to hide the private key.</p>
           
           <h2>5. The Avalanche Effect</h2>
-          <p>Come si evince dall'ultima colonna della nostra tabella statistica, un cambiamento minuscolo nell'input (es. incrementare $k$ da 6 a 7) provoca il ribaltamento (bit flip) di una grandissima parte dei bit di output. In media, ci aspettiamo un cambiamento del ~50% dei bit, garantendo una forte distanza di Hamming tra chiavi adiacenti. Questa assenza di continuità previene attacchi basati sui gradienti, rendendo l'Elliptic Curve Discrete Logarithm Problem (ECDLP) intrattabile computazionalmente nei grandi numeri.</p>
+          <p>As shown in the last column of our statistical table, a tiny change in the input (e.g., incrementing $k$ from 6 to 7) causes the flipping of a large portion of the output bits. On average, we expect a change of ~50% of the bits, ensuring a strong Hamming distance between adjacent keys. This lack of continuity prevents gradient-based attacks, making the Elliptic Curve Discrete Logarithm Problem (ECDLP) computationally intractable for large numbers.</p>
           
           <h2>6. Hash Functions vs Elliptic Curve (One-Way Functions)</h2>
-          <p>Una funzione Hash crittografica (come SHA-256) è progettata per distruggere completamente ogni struttura matematica originaria dei dati in ingresso, restituendo un fingerprint casuale. La moltiplicazione scalare sulle curve ellittiche è anch'essa una funzione One-Way, ma al contrario degli hash, <strong>preserva un'intensa struttura di gruppo algebrico</strong>. È proprio questa struttura matematica che permette la creazione di firme digitali verificabili (come le transazioni in Ethereum), fondendo il caos apparente (per resistere al reverse-engineering) con l'ordine geometrico (per consentire la validazione pubblica).</p>
+          <p>A cryptographic Hash function (like SHA-256) is designed to completely destroy any original mathematical structure of the input data, returning a random fingerprint. Scalar multiplication on elliptic curves is also a One-Way function, but unlike hashes, it <strong>preserves a strong algebraic group structure</strong>. It is precisely this mathematical structure that allows the creation of verifiable digital signatures (such as Ethereum transactions), blending apparent chaos (to resist reverse-engineering) with geometric order (to allow public validation).</p>
       </div>
     </div>
 
