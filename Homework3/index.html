@@ -4,64 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homework 2: Cryptanalysis & Schemes</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        body { font-family: 'Courier New', Courier, monospace; background-color: #1e1e2e; color: #cdd6f4; padding: 20px; line-height: 1.6; }
-        .container { max-width: 950px; margin: 0 auto; background-color: #313244; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        h1, h2, h3 { color: #89b4fa; }
-        button { padding: 10px 15px; background-color: #89b4fa; color: #11111b; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 10px; font-family: inherit; margin-top: 10px;}
-        button:hover { background-color: #b4befe; }
-        input, textarea { padding: 8px; border-radius: 4px; border: 1px solid #585b70; background-color: #181825; color: #cdd6f4; width: 100%; box-sizing: border-box; margin-bottom: 10px; font-family: inherit;}
-        .highlight { color: #a6e3a1; font-weight: bold; }
-        .danger { color: #f38ba8; font-weight: bold; }
-        .box { background-color: #181825; padding: 15px; border-left: 3px solid #f38ba8; margin-top: 15px; }
-        .theory-box { background-color: #282a36; padding: 20px; border-left: 4px solid #8be9fd; margin-top: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 0.95em; color: #f8f8f2; }
-        .theory-box h3 { margin-top: 0; color: #8be9fd; }
-        .theory-box ul { padding-left: 20px; margin-bottom: 0; }
-        .theory-box li { margin-bottom: 8px; }
-        hr.section-divider { border: 0; height: 1px; background: #585b70; margin: 40px 0; }
-    </style>
+    <!-- Riferimento unico al file CSS esterno -->
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>Homework 2: Applied Cryptography & Cryptanalysis</h1>
-        <p>This interactive report compares a toy Elliptic Curve Cryptography (ECC) scheme with the classic Caesar Cipher, followed by cryptanalysis attacks against both.</p>
+        <h1>Homework 2: Applied Cryptography</h1>
+        <p style="text-align: center;">This interactive report compares a toy Elliptic Curve Cryptography (ECC) scheme with the classic Caesar Cipher, followed by cryptanalysis attacks against both.</p>
 
         <!-- ========================================== -->
         <!-- SECTION 1: ECC ENCRYPTION                  -->
         <!-- ========================================== -->
         <h2>1. Toy ECC Encryption Scheme</h2>
-        <p>Using the finite field <strong>Z_17</strong> and curve <strong>y² = x³ + 7</strong>.</p>
-
-        <label>Message (M):</label>
-        <input type="text" id="ecc-message" value="CRYPTOGRAPHY IS FASCINATING">
         
-        <div style="display: flex; gap: 10px;">
-            <div style="flex: 1;">
-                <label>Recipient's Private Key (k):</label>
-                <input type="number" id="ecc-bob-k" value="5" min="1" max="16">
+        <div class="controls-box">
+            <p style="margin-top:0;"><strong>Curve:</strong> y² = x³ + 7 (mod 17)</p>
+            
+            <label>Message (M):</label>
+            <input type="text" id="ecc-message" value="CRYPTOGRAPHY IS FASCINATING">
+            
+            <div class="inputs-row">
+                <div style="flex: 1; min-width: 200px;">
+                    <label>Recipient's Private Key (k):</label>
+                    <input type="number" id="ecc-bob-k" value="5" min="1" max="16">
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <label>Sender's Ephemeral Key (r):</label>
+                    <input type="number" id="ecc-alice-r" value="3" min="1" max="16">
+                </div>
             </div>
-            <div style="flex: 1;">
-                <label>Sender's Ephemeral Key (r):</label>
-                <input type="number" id="ecc-alice-r" value="3" min="1" max="16">
-            </div>
-        </div>
-        
-        <button onclick="eccEncrypt()">Encrypt Message</button>
-        <button onclick="eccDecrypt()">Decrypt Message</button>
-
-        <div class="box">
-            <p>Bob's Public Key (Q = kG): <span class="highlight" id="ecc-bob-q">-</span></p>
-            <p>Alice's Ephemeral Point (R = rG): <span class="highlight" id="ecc-alice-r-out">-</span></p>
-            <p>Shared Secret X-Coordinate: <span class="highlight" id="ecc-secret-out">-</span></p>
-            <hr style="border: 1px solid #313244;">
-            <p><strong>Ciphertext:</strong> <span class="danger" id="ecc-cipher-out">-</span></p>
-            <p><strong>Decrypted Text:</strong> <span class="highlight" id="ecc-plain-out" style="color: #f9e2af;">-</span></p>
+            
+            <button onclick="eccEncrypt()">Encrypt Message</button>
+            <button onclick="eccDecrypt()">Decrypt Message</button>
         </div>
 
-        <div class="theory-box">
-            <h3>📝 Main Steps and Role of the Keys</h3>
+        <div class="result-box">
+            <h3>TRANSMISSION DATA:</h3>
+            <p>Bob's Public Key (Q = kG): <span class="highlight-data" id="ecc-bob-q">-</span></p>
+            <p>Alice's Ephemeral Point (R = rG): <span class="highlight-data" id="ecc-alice-r-out">-</span></p>
+            <p>Shared Secret X-Coordinate: <span class="highlight-data" id="ecc-secret-out">-</span></p>
+            <hr style="border: 0; height: 1px; background: #444; margin: 15px 0;">
+            <p><strong>Ciphertext:</strong> <span class="danger-data" id="ecc-cipher-out">-</span></p>
+            <p><strong>Decrypted Text:</strong> <span class="success-data" id="ecc-plain-out">-</span></p>
+        </div>
+
+        <div class="explanation-box">
+            <h3 style="color: #8be9fd;">📝 Main Steps and Role of the Keys</h3>
             <ul>
                 <li><strong>Step 1 (Key Generation):</strong> The recipient (Bob) chooses a secret <strong>Private Key (k)</strong> and computes his <strong>Public Key (Q = kG)</strong>. The public key is distributed openly, while the private key is never shared. Its role is to allow Alice to securely sync on a shared secret (S = rQ) using Bob's data, without exposing any private information.</li>
                 <li><strong>Step 2 (Encryption):</strong> The sender (Alice) generates a random number (r) and creates a temporary <strong>Point R = rG</strong>. She then multiplies her random number by Bob's public key, obtaining a Shared Secret (S = rQ). Alice uses the X-coordinate of this secret to mask the message and sends Bob both the ciphertext and Point R. The role of her <strong>Ephemeral Key (r)</strong> and Point R is to act as "half of the padlock": Bob receives it and combines it with his private key to unlock the message.</li>
@@ -69,62 +58,70 @@
             </ul>
         </div>
 
-        <hr class="section-divider">
-
         <!-- ========================================== -->
         <!-- SECTION 2: CAESAR CIPHER                   -->
         <!-- ========================================== -->
         <h2>2. The Caesar Cipher</h2>
         
-        <label>Message:</label>
-        <input type="text" id="caesar-message" value="CRYPTOGRAPHY IS FASCINATING">
-        
-        <label>Shift Key (Range 1-25):</label>
-        <input type="number" id="caesar-key" value="3" min="1" max="25">
-        
-        <button onclick="caesarEncrypt()">Encrypt (Caesar)</button>
-        <button onclick="caesarDecrypt()">Decrypt (Caesar)</button>
-
-        <div class="box">
-            <p><strong>Caesar Ciphertext:</strong> <span class="danger" id="caesar-cipher-out">-</span></p>
-            <p><strong>Decrypted Text:</strong> <span class="highlight" id="caesar-plain-out" style="color: #f9e2af;">-</span></p>
+        <div class="controls-box" style="border-left-color: #8be9fd;">
+            <label>Message:</label>
+            <input type="text" id="caesar-message" value="CRYPTOGRAPHY IS FASCINATING">
+            
+            <div class="inputs-row">
+                <div style="flex: 1;">
+                    <label>Shift Key (Range 1-25):</label>
+                    <input type="number" id="caesar-key" value="3" min="1" max="25">
+                </div>
+            </div>
+            
+            <button onclick="caesarEncrypt()">Encrypt (Caesar)</button>
+            <button onclick="caesarDecrypt()">Decrypt (Caesar)</button>
         </div>
 
-        <div class="theory-box">
-            <h3>📝 Comparative Analysis: ECC vs Caesar Cipher</h3>
+        <div class="result-box">
+            <h3>CAESAR OUTPUT:</h3>
+            <p><strong>Caesar Ciphertext:</strong> <span class="danger-data" id="caesar-cipher-out">-</span></p>
+            <p><strong>Decrypted Text:</strong> <span class="success-data" id="caesar-plain-out">-</span></p>
+        </div>
+
+        <div class="explanation-box">
+            <h3 style="color: #8be9fd;">📝 Comparative Analysis: ECC vs Caesar Cipher</h3>
             <ul>
                 <li><strong>A. Encryption & Decryption Procedures:</strong> The Caesar Cipher is a symmetric monoalphabetic substitution cipher. Sender and recipient must pre-agree on a single secret key (k ∈ {1, ..., 25}). Encryption is based on a direct linear modular arithmetic operation on the alphabet letters: <em>C = (P + k) mod 26</em>, and decryption applies the inverse: <em>P = (C - k) mod 26</em>. 
-                <br>The Toy ECC Scheme is an asymmetric cryptography protocol. The recipient owns a key pair (private k, public Q = kG). Encryption does not shift characters directly initially, but exploits modular geometry on elliptic curves: the sender generates a random number r, computes a public point R = rG to transmit, and derives a Shared Secret S = rQ. Decryption is only possible for the recipient through the calculation S = kR = k(rG) = r(kG).</li>
-                
+                <br><br>The Toy ECC Scheme is an asymmetric cryptography protocol. The recipient owns a key pair (private k, public Q = kG). Encryption does not shift characters directly initially, but exploits modular geometry on elliptic curves: the sender generates a random number r, computes a public point R = rG to transmit, and derives a Shared Secret S = rQ. Decryption is only possible for the recipient through the calculation S = kR = k(rG) = r(kG).</li>
+                <br>
                 <li><strong>B. Key Spaces:</strong> The Caesar Cipher has an extremely reduced key space, limited to only 25 possible keys (since a shift of 0 or 26 leaves the text unchanged). 
                 <br>In our Toy ECC Scheme (Z_17), the private key k is restricted to the order of the cyclic group (i.e., 16 possible keys). Although on the toy curve the space is comparable to Caesar's, in a real ECC scheme (e.g., standard secp256k1) the key space is in the order of 2²⁵⁶ (approx. 1.15 × 10⁷⁷), making the key space incommensurably larger and secure.</li>
-                
+                <br>
                 <li><strong>C. Statistical Properties:</strong> The Caesar Cipher perfectly preserves the statistical properties of the plaintext 1 to 1. If 'E' is the most frequent letter in the plaintext, its corresponding ciphertext letter will be the most frequent. Double letters remain double (e.g., 'LL' becomes 'OO'). This makes the cipher highly vulnerable to statistical frequency cryptanalysis. 
                 <br>In the ECC Scheme, although our toy implementation uses the secret point's X-coordinate to shift the text, the key generation mechanism completely hides the private key. In real ECC schemes (like ECIES or ECDH with AES), the combination of the scalar multiplication kG (which shows a strong avalanche effect) and a Key Derivation Function (KDF) completely destroys the statistical distribution of the original alphabet, producing ciphertext that is statistically indistinguishable from random noise.</li>
             </ul>
         </div>
 
-        <hr class="section-divider">
-
         <!-- ========================================== -->
         <!-- SECTION 3: STATISTICAL ATTACK              -->
         <!-- ========================================== -->
         <h2>3. Statistical Cryptanalysis of Caesar Cipher</h2>
-        <p>This algorithm recovers the secret key by exploiting letter frequency distribution.</p>
-
-        <label>Large Ciphertext Corpus to Analyze:</label>
-        <textarea id="caesar-attack-input" rows="4">WKH FDHVDU FLSKHU LV RQH RI WKH HDUOLHVW NQRZQ DQG VLPSOHVW FLSKHUV. LW LV D WBSH RI VXEVWLWXWLRQ FLSKHU LQ ZKLFK HDFK OHWWHU LQ WKH SODLQWHAW LV VKLIWHG D FHUWDLQ QXPEHU RI SODFHV.</textarea>
         
-        <button onclick="caesarStatisticalAttack()">Run Statistical Attack</button>
-
-        <div class="box">
-            <p>Most Frequent Letter Found: <span class="highlight" id="stat-most-freq">-</span></p>
-            <p>Recovered Shift Key: <span class="danger" id="stat-recovered-key">-</span></p>
-            <p><strong>Recovered Plaintext:</strong> <span class="highlight" id="stat-decrypted-text" style="color: #f9e2af;">-</span></p>
+        <div class="controls-box" style="border-left-color: #ff5555;">
+            <p style="margin-top:0;">This algorithm recovers the secret key by exploiting letter frequency distribution.</p>
+            
+            <label>Large Ciphertext Corpus to Analyze:</label>
+            <textarea id="caesar-attack-input" rows="4" style="margin-top: 10px;">WKH FDHVDU FLSKHU LV RQH RI WKH HDUOLHVW NQRZQ DQG VLPSOHVW FLSKHUV. LW LV D WBSH RI VXEVWLWXWLRQ FLSKHU LQ ZKLFK HDFK OHWWHU LQ WKH SODLQWHAW LV VKLIWHG D FHUWDLQ QXPEHU RI SODFHV.</textarea>
+            
+            <button onclick="caesarStatisticalAttack()">Run Statistical Attack</button>
         </div>
 
-        <div class="theory-box">
-            <h3>📝 Effectiveness, Limitations & Alternative Approaches</h3>
+        <div class="result-box">
+            <h3>ATTACK RESULTS:</h3>
+            <p>Most Frequent Letter Found: <span class="highlight-data" id="stat-most-freq">-</span></p>
+            <p>Recovered Shift Key: <span class="danger-data" id="stat-recovered-key">-</span></p>
+            <hr style="border: 0; height: 1px; background: #444; margin: 15px 0;">
+            <p><strong>Recovered Plaintext:</strong> <span class="success-data" id="stat-decrypted-text">-</span></p>
+        </div>
+
+        <div class="explanation-box">
+            <h3 style="color: #8be9fd;">📝 Effectiveness, Limitations & Alternative Approaches</h3>
             <ul>
                 <li><strong>Effectiveness:</strong> This heuristic attack is highly effective on <strong>large text corpuses</strong> because human languages follow strict mathematical distributions. By simply mapping the most frequent ciphertext character to 'E' (the most common English letter), the key is revealed instantly.</li>
                 <li><strong>Limitations:</strong> It fails completely on very short messages. For example, in the word "ZOO", 'O' is the most frequent letter. A statistical algorithm analyzing just this word would falsely assume 'O' corresponds to 'E', yielding the wrong key.</li>
@@ -132,30 +129,34 @@
             </ul>
         </div>
 
-        <hr class="section-divider">
-
         <!-- ========================================== -->
         <!-- SECTION 4: ECC BRUTE FORCE                 -->
         <!-- ========================================== -->
         <h2>4. Brute-Force Attack on Toy ECC Scheme</h2>
-        <p>Simulating an attacker intercepting Public Key Q and Point R, recovering the private key.</p>
-
-        <button onclick="eccBruteForceAttack()">Run ECC Brute-Force Attack</button>
-
-        <div class="box">
-            <p>Key Search Attempts: <span class="highlight" id="ecc-attack-attempts">-</span></p>
-            <p>Recovered Private Key (k): <span class="danger" id="ecc-recovered-k">-</span></p>
-            <p><strong>Decrypted Message using Recovered Key:</strong> <span class="highlight" id="ecc-attack-plaintext" style="color: #f9e2af;">-</span></p>
+        
+        <div class="controls-box" style="border-left-color: #ff5555;">
+            <p style="margin-top:0;">Simulating an attacker intercepting Public Key Q and Point R, recovering the private key.</p>
+            <button onclick="eccBruteForceAttack()">Run ECC Brute-Force Attack</button>
         </div>
 
-        <div class="theory-box">
-            <h3>📝 Attack Differences & Design Weaknesses</h3>
+        <div class="result-box">
+            <h3>ATTACK RESULTS:</h3>
+            <p>Key Search Attempts: <span class="highlight-data" id="ecc-attack-attempts">-</span></p>
+            <p>Recovered Private Key (k): <span class="danger-data" id="ecc-recovered-k">-</span></p>
+            <hr style="border: 0; height: 1px; background: #444; margin: 15px 0;">
+            <p><strong>Decrypted Message using Recovered Key:</strong> <span class="success-data" id="ecc-attack-plaintext">-</span></p>
+        </div>
+
+        <div class="explanation-box">
+            <h3 style="color: #8be9fd;">📝 Attack Differences & Design Weaknesses</h3>
             <ul>
                 <li><strong>Attack Differences (Brute Force vs Statistics):</strong> The attack against the Caesar Cipher is a heuristic/statistical attack: it does not try all keys randomly, but exploits an intrinsic weakness of the cipher, namely the fact that it does not mask linguistic probabilities. If the ciphertext is long enough, the statistical attack finds the key in a single logical attempt (calculating the distance from the most frequent letter). 
-                <br>The attack against our ECC scheme is instead an exhaustive brute-force attack. It does not analyze linguistic text, but solely exploits the enormous limitation of the key space (only 16 possible keys in our Toy Curve mod 17). The algorithm literally computes the operation kG for every existing number until it finds an exact match (collision) with the public key Q.</li>
-                
+                <br><br>The attack against our ECC scheme is instead an exhaustive brute-force attack. It does not analyze linguistic text, but solely exploits the enormous limitation of the key space (only 16 possible keys in our Toy Curve mod 17). The algorithm literally computes the operation kG for every existing number until it finds an exact match (collision) with the public key Q.</li>
+                <br>
                 <li><strong>Why the scheme fails on a "real" curve like secp256k1:</strong> Our attack succeeds in a fraction of a millisecond because the computer has to execute the for loop a maximum of 16 times. This problem, mathematically known as the Elliptic Curve Discrete Logarithm Problem (ECDLP), is trivial on very small finite fields. 
                 <br>In a properly configured ECC scheme (e.g., Bitcoin/Ethereum with the real secp256k1), the finite field p and the subgroup order are numbers close to 2²⁵⁶. This creates a key space so vast (about 10⁷⁷ combinations) that executing an exhaustive for loop to calculate every possible kG would require all the supercomputers on Earth a time longer than the estimated age of the universe. The security of real ECC derives entirely from the computational intractability of this search.</li>
+            </ul>
+        </div>
 
     </div>
 
