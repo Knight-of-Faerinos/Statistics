@@ -20,32 +20,29 @@ body {
 h1 { color: #ff79c6; text-align: center; margin-top: 0; }
 header p { text-align: center; font-weight: bold; margin-bottom: 30px; color: #bd93f9; }
 
-h2 { color: #8be9fd; font-size: 1.1em; border-bottom: 1px dashed #444; padding-bottom: 5px; margin-top: 0; }
+h2 { color: #8be9fd; font-size: 1.1em; border-bottom: 1px dashed #444; padding-bottom: 5px; margin-top: 40px; }
 h3 { color: #50fa7b; margin: 0 0 10px 0; font-size: 1.1em; }
 
 /* =========================================
    CONTROL PANEL (Inputs)
    ========================================= */
-.controls {
+.controls-box {
     background-color: #1e1e29; 
-    padding: 20px;
+    padding: 15px;
     border-radius: 8px; 
-    border-left: 4px solid #ffb86c; /* Orange border like old HW */
-    margin-bottom: 30px;
+    border-left: 4px solid #ffb86c; /* Bordo Arancione */
+    margin-bottom: 20px;
 }
 
-.input-group {
-    margin-bottom: 15px;
+.inputs-row { 
+    display: flex; 
+    gap: 15px; 
+    align-items: center; 
+    margin-top: 15px; 
+    flex-wrap: wrap;
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #d1d1e0;
-    font-weight: bold;
-}
-
-input, select { 
+input, select, textarea { 
     background: #252533; 
     color: #ffffff; 
     border: 1px solid #444; 
@@ -60,44 +57,61 @@ button {
     background: #bd93f9; 
     color: #000000; 
     border: none; 
-    padding: 10px 15px; 
+    padding: 8px 15px; 
     border-radius: 4px; 
     font-weight: bold; 
     cursor: pointer; 
     transition: 0.2s;
     margin-top: 10px;
-    width: 100%; /* Makes the button fill the panel width */
+    width: 100%;
     font-size: 1.1em;
 }
 
 button:hover { background: #ff79c6; }
 
 /* =========================================
-   CHARTS SECTION (Results)
+   CHARTS SECTION (Results & Explanations)
    ========================================= */
-.chart-box {
+.result-box {
+    background-color: #1e1e29; 
+    padding: 15px;
+    border-radius: 8px; 
+    border-left: 4px solid #50fa7b; /* Bordo Verde di base */
+    margin-top: 20px;
+}
+
+.explanation-box {
+    margin-top: 20px; 
     background-color: #1e1e29; 
     padding: 20px;
     border-radius: 8px; 
-    border-left: 4px solid #50fa7b; /* Green border like old HW result-box */
-    margin-bottom: 25px;
-}
-
-.chart-box p {
+    border-left: 4px solid #bd93f9; /* Bordo Viola di base */
     font-size: 0.9em;
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: #8be9fd; /* Cyan text for explanations */
 }
 
-/* 
-   Plotly requires a defined height to render correctly 
-   before the data is injected.
-*/
-#chartTotal, #chartAverage, #chartNormalized {
+.explanation-box ul { padding-left: 20px; margin-bottom: 0; }
+.explanation-box li { margin-bottom: 8px; }
+
+/* Highlight Data */
+.highlight-data { font-size: 1.1em; font-weight: bold; color: #ffffff; }
+.danger-data { font-size: 1.1em; font-weight: bold; color: #ff5555; }
+.success-data { font-size: 1.1em; font-weight: bold; color: #50fa7b; }
+
+hr.section-divider { border: 0; height: 1px; background: #444; margin: 30px 0; }
+
+/* Plotly Containers */
+#chartTotal, #chartAverage, #chartNormalized, #chartHistogram {
     width: 100%;
     height: 400px;
     background-color: #252533; 
     border-radius: 4px;
     border: 1px solid #444;
 }
+
+/* =========================================
+   UTILITY CLASSES (Per cambiare i bordi a piacimento)
+   ========================================= */
+.border-red { border-left-color: #ff5555 !important; }
+.border-cyan { border-left-color: #8be9fd !important; }
+.border-pink { border-left-color: #ff79c6 !important; }
+.border-purple { border-left-color: #bd93f9 !important; }
