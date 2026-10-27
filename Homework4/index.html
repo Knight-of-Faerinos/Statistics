@@ -5,73 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homework 3: Stochastic Penetration Process</title>
     
-    <!-- Link to the CSS file -->
+    <!-- Link to the external CSS file (your Dracula theme) -->
     <link rel="stylesheet" href="style.css">
     
-    <!-- Plotly.js via CDN for drawing the charts -->
+    <!-- Plotly.js via CDN for high-performance rendering -->
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 </head>
 <body>
 
-    <header>
-        <h1>Homework 3: Stochastic Penetration Process</h1>
-        <p>Law of Large Numbers (LLN) & Central Limit Theorem (CLT) Simulation</p>
-    </header>
-
     <div class="container">
+        <header>
+            <h1>Homework 3: Stochastic Penetration Process</h1>
+            <p>Law of Large Numbers (LLN) & Central Limit Theorem (CLT) Simulation</p>
+        </header>
         
-        <!-- CONTROL PANEL (User Inputs) -->
-        <aside class="controls">
-            <h2>Settings</h2>
+        <!-- ========================================== -->
+        <!-- CONTROL PANEL (User Inputs)                -->
+        <!-- ========================================== -->
+        <aside class="controls-box">
+            <h2 style="margin-top: 0;">Simulation Settings</h2>
             
-            <div class="input-group">
-                <label for="modelSelect">Mathematical Model:</label>
-                <select id="modelSelect">
-                    <option value="bernoulli">Bernoulli (0, 1)</option>
-                    <option value="rademacher">Rademacher (-1, +1)</option>
-                </select>
+            <div class="inputs-row">
+                <div style="flex: 1; min-width: 200px;">
+                    <label for="modelSelect">Mathematical Model:</label>
+                    <select id="modelSelect">
+                        <option value="bernoulli">Bernoulli (0, 1)</option>
+                        <option value="rademacher">Rademacher (-1, +1)</option>
+                    </select>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <label for="inputP">Probability (p) - Bernoulli only:</label>
+                    <input type="number" id="inputP" value="0.5" min="0" max="1" step="0.1">
+                </div>
             </div>
 
-            <div class="input-group">
-                <label for="inputN">Number of Systems (n):</label>
-                <input type="number" id="inputN" value="1000" min="10">
+            <div class="inputs-row">
+                <div style="flex: 1; min-width: 200px;">
+                    <label for="inputN">Number of Systems (n):</label>
+                    <input type="number" id="inputN" value="1000" min="10">
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <label for="inputM">Number of Attackers (m):</label>
+                    <input type="number" id="inputM" value="100" min="1">
+                </div>
             </div>
 
-            <div class="input-group">
-                <label for="inputM">Number of Attackers (m):</label>
-                <input type="number" id="inputM" value="50" min="1">
-            </div>
-
-            <div class="input-group">
-                <label for="inputP">Probability (p) - Bernoulli only:</label>
-                <input type="number" id="inputP" value="0.5" min="0" max="1" step="0.1">
-            </div>
-
-            <button id="startBtn">Run Simulation</button>
+            <button id="startBtn" style="width: 100%; margin-top: 20px;">Run Monte Carlo Simulation</button>
         </aside>
 
-        <!-- CHARTS SECTION -->
+        <!-- ========================================== -->
+        <!-- CHARTS SECTION                             -->
+        <!-- ========================================== -->
         <main class="charts-section">
             
-            <!-- Chart 1: Total Score (S_n) -->
-            <div class="chart-box">
-                <h3>Total Score (Sₙ)</h3>
-                <p>Observe how trajectories diverge and variance grows as <em>n</em> increases.</p>
-                <div id="chartTotal"></div> 
+            <!-- Chart 1: Total Score -->
+            <div class="result-box">
+                <h3>1. Total Score (Sₙ)</h3>
+                <!-- Plotly injects the chart here -->
+                <div id="chartTotal" style="width: 100%; height: 400px;"></div> 
+            </div>
+            
+            <div class="explanation-box">
+                <h3 style="color: #8be9fd;">📝 Interpretation: Divergence and Absolute Variance</h3>
+                <ul>
+                    <li><strong>Behavior:</strong> As the number of systems (<em>n</em>) increases, the trajectories continuously spread out. Mathematically, the variance of Sₙ grows linearly with <em>n</em> (Var(Sₙ) = n · Var(Xᵢ)).</li>
+                    <li><strong>Context (n systems, m attackers):</strong> This represents the aggregate penetration score. Even though all <em>m</em> attackers have the exact same skill level (same probability distribution), sheer probability causes their total successes to diverge wildly over time. A larger <em>m</em> reveals the extreme best-case and worst-case scenarios.</li>
+                </ul>
             </div>
 
-            <!-- Chart 2: Average Score (S_n / n) -->
-            <div class="chart-box">
-                <h3>Average Score (Sₙ / n)</h3>
-                <p>Convergence to the expected value in probability (Law of Large Numbers).</p>
-                <div id="chartAverage"></div>
+            <hr class="section-divider">
+
+            <!-- Chart 2: Average Score -->
+            <div class="result-box">
+                <h3>2. Average Score (Sₙ / n)</h3>
+                <div id="chartAverage" style="width: 100%; height: 400px;"></div>
             </div>
 
-            <!-- Chart 3: Normalized Score (S_n / √n) -->
-            <div class="chart-box">
-                <h3>Normalized Total Score (Sₙ / √n)</h3>
-                <p>Variance stabilizes and converges in distribution to a standard normal (Central Limit Theorem).</p>
-                <div id="chartNormalized"></div>
+            <div class="explanation-box">
+                <h3 style="color: #8be9fd;">📝 Interpretation: Law of Large Numbers (LLN)</h3>
+                <ul>
+                    <li><strong>Convergence in Probability:</strong> The Law of Large Numbers states that the sample average converges in probability to the expected value (μ). The dashed red line represents this theoretical expectation.</li>
+                    <li><strong>Variance Behavior:</strong> Unlike the total score, the variance here shrinks to zero as <em>n</em> approaches infinity.</li>
+                    <li><strong>Context (n systems, m attackers):</strong> Early on, an attacker might seem highly successful or incompetent due to variance. However, as the system size (<em>n</em>) grows, "luck" is factored out, and the aggregate penetration score stabilizes to the attacker's true underlying probability.</li>
+                </ul>
+            </div>
+
+            <hr class="section-divider">
+
+            <!-- Chart 3: Normalized Score -->
+            <div class="result-box">
+                <h3>3. Normalized Total Score (Sₙ / √n)</h3>
+                <div id="chartNormalized" style="width: 100%; height: 400px;"></div>
+            </div>
+
+            <div class="explanation-box">
+                <h3 style="color: #8be9fd;">📝 Interpretation: Variance Stabilization</h3>
+                <ul>
+                    <li><strong>Variance Behavior:</strong> By dividing by √n, we perfectly balance the growing variance of the total score. The variance remains constant regardless of how large <em>n</em> gets, keeping trajectories bounded within a stable horizontal "tunnel".</li>
+                </ul>
+            </div>
+
+            <hr class="section-divider">
+
+            <!-- Chart 4: Final Distribution (Histogram) -->
+            <div class="result-box" style="border-left-color: #ff79c6;">
+                <h3 style="color: #ff79c6;">4. Final Distribution (Proof of CLT)</h3>
+                <p style="font-size: 0.9em; margin-top: 0; margin-bottom: 10px;">Histogram of the final Normalized Scores (Sₙ / √n) at step <em>n</em> for all <em>m</em> attackers.</p>
+                <div id="chartHistogram" style="width: 100%; height: 400px;"></div>
+            </div>
+
+            <div class="explanation-box">
+                <h3 style="color: #8be9fd;">📝 Interpretation: Central Limit Theorem (CLT)</h3>
+                <ul>
+                    <li><strong>Convergence in Distribution:</strong> According to the CLT, the sum of independent identically distributed random variables, properly normalized, converges in distribution to a Gaussian (Normal) distribution. </li>
+                    <li><strong>Context (n systems, m attackers):</strong> Looking at the endpoints of all <em>m</em> attackers at the final step <em>n</em>, their scores form a bell curve. This implies that while individual penetration events are discrete and random, the macro-level behavior of many attackers against many systems is highly predictable and continuously distributed.</li>
+                </ul>
             </div>
 
         </main>
