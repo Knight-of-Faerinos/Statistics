@@ -1,97 +1,151 @@
-// Add an event listener to the button: when clicked, it executes runSimulation
+// Attach event listener to the button
 document.getElementById('startBtn').addEventListener('click', runSimulation);
 
 function runSimulation() {
     // ==========================================
-    // 1. READ USER INPUTS
+    // 1. READ & PARSE USER INPUTS
     // ==========================================
     const model = document.getElementById('modelSelect').value;
     const n = parseInt(document.getElementById('inputN').value);
     const m = parseInt(document.getElementById('inputM').value);
     const p = parseFloat(document.getElementById('inputP').value);
 
-    // Arrays that will contain all the lines (trajectories) to be drawn
+    // Arrays to hold the Plotly trace objects
     let tracesTotal = [];
     let tracesAverage = [];
     let tracesNormalized = [];
+    
+    // Array to store ONLY the final normalized value of each attacker (for the Histogram)
+    let finalNormalizedValues = [];
 
-    // Create the X-axis for time (from 1 to n systems)
+    // Determine theoretical expected value based on the chosen model
+    const expectedValue = (model === 'bernoulli') ? p : 0;
+
+    // Create the X-axis representing time/steps (from 1 to n)
     let xAxis = [];
     for(let i = 1; i <= n; i++) {
         xAxis.push(i);
     }
 
     // ==========================================
-    // 2. SIMULATION ENGINE (MONTE CARLO)
+    // 2. MONTE CARLO SIMULATION ENGINE
     // ==========================================
-    // Outer loop: iterate over each attacker (from 1 to m)
     for (let attacker = 0; attacker < m; attacker++) {
         
-        let S = 0; // Total score (S_n) starting at 0 for each attacker
+        let S = 0; // Total score (S_n) accumulator
         
-        // Arrays to store the Y points for this specific attacker
         let yTotal = [];
         let yAverage = [];
         let yNormalized = [];
 
-        // Inner loop: time steps (from 1 to n systems)
+        // Simulate n steps for the current attacker
         for (let i = 1; i <= n; i++) {
-            let X = 0; // The score of this single step (increment)
+            let X = 0; 
 
-            // Stochastic value generation based on the selected model
+            // Stochastic increment generation
             if (model === 'bernoulli') {
-                // Generate a random number between 0 and 1. If less than p, success (1), else (0)
                 X = Math.random() < p ? 1 : 0;
             } else if (model === 'rademacher') {
-                // Generate a random number. 50% probability for +1, 50% probability for -1
                 X = Math.random() < 0.5 ? 1 : -1;
             }
 
-            S += X; // Update the total sum
+            S += X; // Aggregate score
             
-            // Save the 3 calculated values for step 'i'
+            // Calculate and store the 3 metrics
             yTotal.push(S);
             yAverage.push(S / i);
-            yNormalized.push(S / Math.sqrt(i));
+            
+            // Avoid division by zero at step 0 (though we start at i=1)
+            let normalized = S / Math.sqrt(i);
+            yNormalized.push(normalized);
         }
 
-        // ==========================================
-        // 3. PREPARE DATA FOR PLOTLY
-        // ==========================================
-        // Create the configuration for a single line trace
+        // Store the very last normalized value for the CLT Histogram
+        finalNormalizedValues.push(yNormalized[n - 1]);
+
+        // Base configuration for a single trajectory line
         let traceConfig = {
             x: xAxis,
             mode: 'lines',
             type: 'scatter',
-            line: { width: 1.5 }, // Line thickness
-            opacity: 0.6,         // Slightly transparent to visualize overlapping lines
-            showlegend: false     // Hide legend because we have m lines
+            line: { width: 1 },
+            opacity: 0.5, // Semi-transparent for better visualization of density
+            showlegend: false,
+            hoverinfo: 'none' // Disabling hover on every single line improves rendering performance
         };
 
-        // Append the calculated line to the respective charts
         tracesTotal.push({ ...traceConfig, y: yTotal });
         tracesAverage.push({ ...traceConfig, y: yAverage });
         tracesNormalized.push({ ...traceConfig, y: yNormalized });
     }
 
     // ==========================================
-    // 4. RENDER CHARTS
+    // 3. ADD THEORETICAL BASELINES (LLN Proof)
     // ==========================================
-    // Aesthetic layout matching your CSS (Dracula Theme)
-    const layout = {
-        plot_bgcolor: '#1e1e29',  // Chart background
-        paper_bgcolor: '#1e1e29', // Background around the chart
-        font: { color: '#d1d1e0', family: 'Courier New' },
-        xaxis: { gridcolor: '#444', zerolinecolor: '#ff5555', title: 'Number of Systems (n)' },
-        yaxis: { gridcolor: '#444', zerolinecolor: '#ff5555' },
-        margin: { l: 50, r: 20, t: 20, b: 50 }
+    // Adding a red dashed line to the Average chart to show the Expected Value
+    let expectedValueTrace = {
+        x: [1, n],
+        y: [expectedValue, expectedValue],
+        mode: 'lines',
+        type: 'scatter',
+        line: { color: '#ff5555', width: 3, dash: 'dash' },
+        name: 'Expected Value (μ)',
+        showlegend: true
+    };
+    tracesAverage.push(expectedValueTrace);
+
+    // ==========================================
+    // 4. PREPARE THE HISTOGRAM (CLT Proof)
+    // ==========================================
+    let traceHistogram = {
+        x: finalNormalizedValues,
+        type: 'histogram',
+        marker: {
+            color: '#bd93f9', // Dracula purple
+            line: {
+                color: '#1e1e29',
+                width: 1
+            }
+        },
+        opacity: 0.8,
+        name: 'Final Distribution'
     };
 
-    // Instruct Plotly to draw/update the 3 div containers with the new data
-    Plotly.newPlot('chartTotal', tracesTotal, layout);
-    Plotly.newPlot('chartAverage', tracesAverage, layout);
-    Plotly.newPlot('chartNormalized', tracesNormalized, layout);
+    // ==========================================
+    // 5. RENDER CHARTS WITH PLOTLY
+    // ==========================================
+    
+    // Aesthetic layout matching the Dracula CSS theme
+    const baseLayout = {
+        plot_bgcolor: '#252533', 
+        paper_bgcolor: '#1e1e29',
+        font: { color: '#d1d1e0', family: 'Courier New' },
+        xaxis: { gridcolor: '#444', zerolinecolor: '#ff5555', title: 'Systems Penetrated (n)' },
+        yaxis: { gridcolor: '#444', zerolinecolor: '#ff5555' },
+        margin: { l: 50, r: 30, t: 30, b: 50 },
+        showlegend: false
+    };
+
+    // Special layout for Average Chart (to show the legend for the Expected Value line)
+    const layoutAverage = {
+        ...baseLayout,
+        showlegend: true,
+        legend: { x: 0.5, y: 1.1, xanchor: 'center', orientation: 'h' }
+    };
+
+    // Special layout for the Histogram
+    const layoutHistogram = {
+        ...baseLayout,
+        xaxis: { gridcolor: '#444', zerolinecolor: '#ff5555', title: 'Final Normalized Score (Sₙ / √n)' },
+        yaxis: { gridcolor: '#444', zerolinecolor: '#ff5555', title: 'Frequency (Number of Attackers)' },
+    };
+
+    // Render all 4 charts
+    Plotly.newPlot('chartTotal', tracesTotal, baseLayout);
+    Plotly.newPlot('chartAverage', tracesAverage, layoutAverage);
+    Plotly.newPlot('chartNormalized', tracesNormalized, baseLayout);
+    Plotly.newPlot('chartHistogram', [traceHistogram], layoutHistogram);
 }
 
-// Automatically run the simulation as soon as the page loads
+// Automatically run the simulation on page load
 window.onload = runSimulation;
