@@ -4,11 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homework 3: Stochastic Penetration Process</title>
-    
-    <!-- Link to the external CSS file (your Dracula theme) -->
     <link rel="stylesheet" href="style.css">
-    
-    <!-- Plotly.js via CDN for high-performance rendering -->
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 </head>
 <body>
@@ -20,10 +16,10 @@
         </header>
         
         <!-- ========================================== -->
-        <!-- CONTROL PANEL (User Inputs)                -->
+        <!-- CONTROL PANEL -->
         <!-- ========================================== -->
         <aside class="controls-box">
-            <h2 style="margin-top: 0;">Simulation Settings</h2>
+            <h2 style="margin-top: 0; border: none;">Simulation Settings</h2>
             
             <div class="inputs-row">
                 <div style="flex: 1; min-width: 200px;">
@@ -50,26 +46,25 @@
                 </div>
             </div>
 
-            <button id="startBtn" style="width: 100%; margin-top: 20px;">Run Monte Carlo Simulation</button>
+            <button id="startBtn">Run Monte Carlo Simulation</button>
         </aside>
 
         <!-- ========================================== -->
-        <!-- CHARTS SECTION                             -->
+        <!-- CHARTS SECTION -->
         <!-- ========================================== -->
         <main class="charts-section">
             
             <!-- Chart 1: Total Score -->
             <div class="result-box">
-                <h3>1. Total Score (Sₙ)</h3>
-                <!-- Plotly injects the chart here -->
-                <div id="chartTotal" style="width: 100%; height: 400px;"></div> 
+                <h3 style="margin-top:0;">1. Total Score (Sₙ)</h3>
+                <div id="chartTotal"></div> 
             </div>
             
-            <div class="explanation-box">
-                <h3 style="color: #8be9fd;">📝 Interpretation: Divergence and Absolute Variance</h3>
+            <div class="explanation-box border-red">
+                <h3 style="color: #ff5555; margin-top:0;">📝 Interpretation: Divergence and Absolute Variance</h3>
                 <ul>
                     <li><strong>Behavior:</strong> As the number of systems (<em>n</em>) increases, the trajectories continuously spread out. Mathematically, the variance of Sₙ grows linearly with <em>n</em> (Var(Sₙ) = n · Var(Xᵢ)).</li>
-                    <li><strong>Context (n systems, m attackers):</strong> This represents the aggregate penetration score. Even though all <em>m</em> attackers have the exact same skill level (same probability distribution), sheer probability causes their total successes to diverge wildly over time. A larger <em>m</em> reveals the extreme best-case and worst-case scenarios.</li>
+                    <li><strong>Context:</strong> This represents the aggregate penetration score. Even though all attackers have the exact same skill level, sheer probability causes their successes to diverge wildly. A larger <em>m</em> reveals the extreme best-case and worst-case scenarios.</li>
                 </ul>
             </div>
 
@@ -77,16 +72,15 @@
 
             <!-- Chart 2: Average Score -->
             <div class="result-box">
-                <h3>2. Average Score (Sₙ / n)</h3>
-                <div id="chartAverage" style="width: 100%; height: 400px;"></div>
+                <h3 style="margin-top:0;">2. Average Score (Sₙ / n)</h3>
+                <div id="chartAverage"></div>
             </div>
 
-            <div class="explanation-box">
-                <h3 style="color: #8be9fd;">📝 Interpretation: Law of Large Numbers (LLN)</h3>
+            <div class="explanation-box border-cyan">
+                <h3 style="color: #8be9fd; margin-top:0;">📝 Interpretation: Law of Large Numbers (LLN)</h3>
                 <ul>
                     <li><strong>Convergence in Probability:</strong> The Law of Large Numbers states that the sample average converges in probability to the expected value (μ). The dashed red line represents this theoretical expectation.</li>
-                    <li><strong>Variance Behavior:</strong> Unlike the total score, the variance here shrinks to zero as <em>n</em> approaches infinity.</li>
-                    <li><strong>Context (n systems, m attackers):</strong> Early on, an attacker might seem highly successful or incompetent due to variance. However, as the system size (<em>n</em>) grows, "luck" is factored out, and the aggregate penetration score stabilizes to the attacker's true underlying probability.</li>
+                    <li><strong>Context:</strong> Early on, an attacker might seem highly successful or incompetent due to variance. As the system size (<em>n</em>) grows, "luck" is factored out, and the aggregate penetration score stabilizes to the attacker's true underlying probability.</li>
                 </ul>
             </div>
 
@@ -94,12 +88,12 @@
 
             <!-- Chart 3: Normalized Score -->
             <div class="result-box">
-                <h3>3. Normalized Total Score (Sₙ / √n)</h3>
-                <div id="chartNormalized" style="width: 100%; height: 400px;"></div>
+                <h3 style="margin-top:0;">3. Normalized Total Score (Sₙ / √n)</h3>
+                <div id="chartNormalized"></div>
             </div>
 
-            <div class="explanation-box">
-                <h3 style="color: #8be9fd;">📝 Interpretation: Variance Stabilization</h3>
+            <div class="explanation-box border-purple">
+                <h3 style="color: #bd93f9; margin-top:0;">📝 Interpretation: Variance Stabilization</h3>
                 <ul>
                     <li><strong>Variance Behavior:</strong> By dividing by √n, we perfectly balance the growing variance of the total score. The variance remains constant regardless of how large <em>n</em> gets, keeping trajectories bounded within a stable horizontal "tunnel".</li>
                 </ul>
@@ -107,39 +101,39 @@
 
             <hr class="section-divider">
 
-            <!-- Chart 4: Final Distribution (Histogram) -->
-            <div class="result-box" style="border-left-color: #ff79c6;">
-                <h3 style="color: #ff79c6;">4. Final Distribution (Proof of CLT)</h3>
-                <p style="font-size: 0.9em; margin-top: 0; margin-bottom: 10px;">Histogram of the final Normalized Scores (Sₙ / √n) at step <em>n</em> for all <em>m</em> attackers.</p>
-                <div id="chartHistogram" style="width: 100%; height: 400px;"></div>
+            <!-- Chart 4: Histogram -->
+            <div class="result-box border-pink">
+                <h3 style="color: #ff79c6; margin-top:0;">4. Final Distribution (Proof of CLT)</h3>
+                <p style="font-size: 0.9em; margin-bottom: 10px;">Histogram of the final Normalized Scores (Sₙ / √n) at step <em>n</em>.</p>
+                <div id="chartHistogram"></div>
             </div>
 
-            <div class="explanation-box">
-                <h3 style="color: #8be9fd;">📝 Interpretation: Central Limit Theorem (CLT)</h3>
+            <div class="explanation-box border-pink">
+                <h3 style="color: #ff79c6; margin-top:0;">📝 Interpretation: Central Limit Theorem (CLT)</h3>
                 <ul>
                     <li><strong>Convergence in Distribution:</strong> According to the CLT, the sum of independent identically distributed random variables, properly normalized, converges in distribution to a Gaussian (Normal) distribution. </li>
-                    <li><strong>Context (n systems, m attackers):</strong> Looking at the endpoints of all <em>m</em> attackers at the final step <em>n</em>, their scores form a bell curve. This implies that while individual penetration events are discrete and random, the macro-level behavior of many attackers against many systems is highly predictable and continuously distributed.</li>
+                    <li><strong>Context:</strong> Looking at the endpoints of all attackers at the final step <em>n</em>, their scores form a bell curve. This implies that while individual penetration events are discrete and random, the macro-level behavior of many attackers is continuously distributed.</li>
                 </ul>
             </div>
+
+            <!-- ========================================== -->
+            <!-- FINAL CONCLUSIONS -->
+            <!-- ========================================== -->
             <hr class="section-divider">
             
-            <div class="result-box" style="border-left-color: #bd93f9; text-align: center; margin-bottom: 0;">
-                <h2 style="color: #bd93f9; margin-top: 0; border-bottom: none; font-size: 1.5em;">Final Conclusions: The Predictability of Risk</h2>
-            </div>
-
-            <div class="explanation-box">
-                <p style="margin-top: 0; font-size: 1.1em; color: #ffffff;">Through the simulation of <em>n</em> systems and <em>m</em> attackers, we can draw three major conclusions regarding stochastic penetration processes:</p>
-                <ul>
-                    <li style="margin-bottom: 15px;"><strong>Micro-Level Chaos vs. Macro-Level Order:</strong> At a small scale (few systems), penetration success is highly unpredictable and dominated by variance. However, as the number of targeted systems increases, the <strong>Law of Large Numbers</strong> takes over, anchoring the attacker's average success rate strictly to their true mathematical capability.</li>
-                    <li style="margin-bottom: 15px;"><strong>The Inevitability of the Bell Curve:</strong> The <strong>Central Limit Theorem</strong> reveals a profound truth: regardless of the underlying discrete model (Bernoulli or Rademacher), the aggregate normalized scores always form a continuous Gaussian distribution. This means system administrators can use standard normal probabilities to confidently calculate worst-case and best-case attack scenarios.</li>
-                    <li><strong>Systemic Risk is Quantifiable:</strong> While it is impossible to predict the exact outcome of a single cyber attack, the overall systemic risk of an infrastructure facing continuous threats is mathematically deterministic. Security defenses can therefore be optimized based on these stable, long-term statistical limits rather than reacting to short-term random anomalies.</li>
+            <div class="explanation-box border-cyan" style="padding-top: 30px;">
+                <h2 style="color: #8be9fd; margin-top: 0; border-bottom: none; font-size: 1.5em; text-align: center;">Final Conclusions: The Predictability of Risk</h2>
+                <p style="font-size: 1.1em; color: #ffffff; text-align: center;">Through the simulation of <em>n</em> systems and <em>m</em> attackers, we draw three major conclusions:</p>
+                <ul style="margin-top: 20px;">
+                    <li style="margin-bottom: 15px;"><strong>Micro-Level Chaos vs. Macro-Level Order:</strong> At a small scale, penetration success is highly unpredictable. As targeted systems increase, the <strong>Law of Large Numbers</strong> anchors the average success rate to the true mathematical capability.</li>
+                    <li style="margin-bottom: 15px;"><strong>The Inevitability of the Bell Curve:</strong> The <strong>Central Limit Theorem</strong> reveals that the aggregate normalized scores always form a Gaussian distribution, allowing standard normal probabilities for worst-case calculations.</li>
+                    <li><strong>Systemic Risk is Quantifiable:</strong> The systemic risk of an infrastructure facing continuous threats is mathematically deterministic. Defenses can be optimized based on stable, long-term statistical limits rather than reacting to short-term anomalies.</li>
                 </ul>
             </div>
 
         </main>
     </div>
 
-    <!-- Link to the JavaScript file -->
     <script src="script.js"></script>
 </body>
 </html>
