@@ -1,0 +1,43 @@
+<!-- ========================================== -->
+<!-- EXERCISE 1: WELFORD'S FORMULA              -->
+<!-- ========================================== -->
+<div class="result-box border-purple">
+    <h2 style="color: #bd93f9; margin-top: 0; border-bottom: none;">Exercise 1: Welford's Recurrence Formulas</h2>
+</div>
+
+<div class="explanation-box border-purple">
+    <h3 style="color: #bd93f9; margin-top:0;">📝 Mathematical Derivation of Welford's Algorithm</h3>
+    <p>To compute the sample variance efficiently in a single pass without storing all data points, we must derive a recursive formula for the Sum of Squares (SS). We start from Knuth's recurrence for the mean:</p>
+    
+    <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
+        Mₙ = Mₙ₋₁ + (xₙ - Mₙ₋₁) / n
+    </div>
+
+    <p>The Sum of Squares at step <em>n</em> is defined as the sum of squared deviations from the current mean:</p>
+    
+    <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
+        SSₙ = Σ (xᵢ - Mₙ)² <br>
+        SSₙ = Σ [ (xᵢ - Mₙ₋₁) + (Mₙ₋₁ - Mₙ) ]² <br>
+        SSₙ = Σ (xᵢ - Mₙ₋₁)² + 2(Mₙ₋₁ - Mₙ) Σ (xᵢ - Mₙ₋₁) + n(Mₙ₋₁ - Mₙ)²
+    </div>
+
+    <p>Since the sum of deviations from the previous mean Σ(xᵢ - Mₙ₋₁) for the first <em>n-1</em> terms is exactly 0, the middle term cancels out for the previous points. Through algebraic substitution of the mean difference, the expression beautifully simplifies to:</p>
+
+    <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
+        SSₙ = SSₙ₋₁ + (xₙ - Mₙ₋₁)(xₙ - Mₙ)
+    </div>
+
+    <p>The <strong>Sample Variance (s²)</strong> can then be extracted at any step by dividing the Sum of Squares by Bessel's correction (n - 1):</p>
+
+    <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
+        s²ₙ = SSₙ / (n - 1)
+    </div>
+
+    <h3 style="color: #bd93f9; margin-top: 25px;">💻 Core Logic Implementation (3 lines)</h3>
+    <p>This elegant mathematical property translates into highly efficient, numerically stable code that avoids catastrophic cancellation:</p>
+    
+    <pre style="background-color: #252533; padding: 15px; border-radius: 5px; color: #50fa7b; overflow-x: auto;">
+let delta = x - mean;
+mean += delta / n;
+SS += delta * (x - mean); // Note: 'mean' is already updated to Mₙ</pre>
+</div>
