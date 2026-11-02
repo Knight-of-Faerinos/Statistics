@@ -1,43 +1,136 @@
-<!-- ========================================== -->
-<!-- EXERCISE 1: WELFORD'S FORMULA              -->
-<!-- ========================================== -->
-<div class="result-box border-purple">
-    <h2 style="color: #bd93f9; margin-top: 0; border-bottom: none;">Exercise 1: Welford's Recurrence Formulas</h2>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 4: Welford's Algorithm & Inference</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+</head>
+<body>
 
-<div class="explanation-box border-purple">
-    <h3 style="color: #bd93f9; margin-top:0;">📝 Mathematical Derivation of Welford's Algorithm</h3>
-    <p>To compute the sample variance efficiently in a single pass without storing all data points, we must derive a recursive formula for the Sum of Squares (SS). We start from Knuth's recurrence for the mean:</p>
-    
-    <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
-        Mₙ = Mₙ₋₁ + (xₙ - Mₙ₋₁) / n
-    </div>
+    <div class="container">
+        
+        <header>
+            <h1>Homework 4: Statistical Inference</h1>
+            <p>Welford's Algorithm, Sampling Mean, and Variance</p>
+        </header>
 
-    <p>The Sum of Squares at step <em>n</em> is defined as the sum of squared deviations from the current mean:</p>
-    
-    <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
-        SSₙ = Σ (xᵢ - Mₙ)² <br>
-        SSₙ = Σ [ (xᵢ - Mₙ₋₁) + (Mₙ₋₁ - Mₙ) ]² <br>
-        SSₙ = Σ (xᵢ - Mₙ₋₁)² + 2(Mₙ₋₁ - Mₙ) Σ (xᵢ - Mₙ₋₁) + n(Mₙ₋₁ - Mₙ)²
-    </div>
+        <main>
+            <!-- ========================================== -->
+            <!-- EXERCISE 1: WELFORD'S FORMULA              -->
+            <!-- ========================================== -->
+            <div class="result-box border-purple">
+                <h2 style="color: #bd93f9; margin-top: 0; border-bottom: none;">Exercise 1: Welford's Recurrence Formulas</h2>
+            </div>
 
-    <p>Since the sum of deviations from the previous mean Σ(xᵢ - Mₙ₋₁) for the first <em>n-1</em> terms is exactly 0, the middle term cancels out for the previous points. Through algebraic substitution of the mean difference, the expression beautifully simplifies to:</p>
+            <div class="explanation-box border-purple">
+                <h3 style="color: #bd93f9; margin-top:0;">📝 Mathematical Derivation of Welford's Algorithm</h3>
+                <p>To compute the sample variance efficiently in a single pass without storing all data points, we must derive a recursive formula for the Sum of Squares (SS). We start from Knuth's recurrence for the mean:</p>
+                
+                <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
+                    Mₙ = Mₙ₋₁ + (xₙ - Mₙ₋₁) / n
+                </div>
 
-    <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
-        SSₙ = SSₙ₋₁ + (xₙ - Mₙ₋₁)(xₙ - Mₙ)
-    </div>
+                <p>The Sum of Squares at step <em>n</em> is defined as the sum of squared deviations from the current mean:</p>
+                
+                <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
+                    SSₙ = Σ (xᵢ - Mₙ)² <br>
+                    SSₙ = Σ [ (xᵢ - Mₙ₋₁) + (Mₙ₋₁ - Mₙ) ]² <br>
+                    SSₙ = Σ (xᵢ - Mₙ₋₁)² + 2(Mₙ₋₁ - Mₙ) Σ (xᵢ - Mₙ₋₁) + n(Mₙ₋₁ - Mₙ)²
+                </div>
 
-    <p>The <strong>Sample Variance (s²)</strong> can then be extracted at any step by dividing the Sum of Squares by Bessel's correction (n - 1):</p>
+                <p>Since the sum of deviations from the previous mean Σ(xᵢ - Mₙ₋₁) for the first <em>n-1</em> terms is exactly 0, the middle term cancels out for the previous points. Through algebraic substitution of the mean difference, the expression beautifully simplifies to:</p>
 
-    <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
-        s²ₙ = SSₙ / (n - 1)
-    </div>
+                <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
+                    SSₙ = SSₙ₋₁ + (xₙ - Mₙ₋₁)(xₙ - Mₙ)
+                </div>
 
-    <h3 style="color: #bd93f9; margin-top: 25px;">💻 Core Logic Implementation (3 lines)</h3>
-    <p>This elegant mathematical property translates into highly efficient, numerically stable code that avoids catastrophic cancellation:</p>
-    
-    <pre style="background-color: #252533; padding: 15px; border-radius: 5px; color: #50fa7b; overflow-x: auto;">
+                <p>The <strong>Sample Variance (s²)</strong> can then be extracted at any step by dividing the Sum of Squares by Bessel's correction (n - 1):</p>
+
+                <div style="background-color: #252533; padding: 15px; border-radius: 5px; margin: 15px 0; font-family: monospace;">
+                    s²ₙ = SSₙ / (n - 1)
+                </div>
+
+                <h3 style="color: #bd93f9; margin-top: 25px;">💻 Core Logic Implementation (3 lines)</h3>
+                <p>This elegant mathematical property translates into highly efficient, numerically stable code that avoids catastrophic cancellation:</p>
+                
+<pre style="background-color: #252533; padding: 15px; border-radius: 5px; color: #50fa7b; overflow-x: auto; margin-bottom: 0;">
 let delta = x - mean;
 mean += delta / n;
-SS += delta * (x - mean); // Note: 'mean' is already updated to Mₙ</pre>
-</div>
+SS += delta * (x - mean); // Note: 'mean' is already updated to Mₙ
+</pre>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- EXERCISE 2: SAMPLING MEAN & VARIANCE       -->
+            <!-- ========================================== -->
+            <hr class="section-divider">
+
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: #ff79c6; border: none; font-size: 1.8em; margin-bottom: 5px;">Exercise 2: Sampling Distributions & Inference</h2>
+                <p style="color: #d1d1e0; margin-top: 0;">
+                    Distribution: <strong>Continuous Uniform [0, 10]</strong> 
+                    | Theoretical Mean (μ): <strong>5.00</strong> 
+                    | Theoretical Variance (σ²): <strong>8.333</strong>
+                </p>
+            </div>
+            
+            <!-- CONTROL PANEL -->
+            <aside class="controls-box border-cyan">
+                <h3 style="margin-top: 0; color: #8be9fd;">Simulation Settings</h3>
+                
+                <div class="inputs-row">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="inputN">Systems per Hacker (n):</label>
+                        <input type="number" id="inputN" value="100" min="2">
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="inputM">Number of Hackers (m):</label>
+                        <input type="number" id="inputM" value="1000" min="1">
+                    </div>
+                </div>
+
+                <button id="startBtn">Run Welford Simulation</button>
+            </aside>
+
+            <!-- EMPIRICAL RESULTS -->
+            <div class="result-box border-pink">
+                <h3 style="color: #ff79c6; margin-top:0;">Empirical Averages Across All Hackers</h3>
+                <p>Average of the Sampling Means: <span class="highlight-data" id="avg-means-out">-</span></p>
+                <p>Average of the Sampling Variances: <span class="highlight-data" id="avg-vars-out">-</span></p>
+            </div>
+
+            <!-- CHARTS SECTION -->
+            <div class="charts-section">
+                <!-- Chart 1: Distribution of Means -->
+                <div class="result-box border-cyan">
+                    <h3 style="color: #8be9fd; margin-top:0;">Distribution of Sampling Means</h3>
+                    <div id="chartMeans" style="width: 100%; height: 400px;"></div> 
+                </div>
+
+                <!-- Chart 2: Distribution of Variances -->
+                <div class="result-box border-cyan">
+                    <h3 style="color: #8be9fd; margin-top:0;">Distribution of Sampling Variances</h3>
+                    <div id="chartVariances" style="width: 100%; height: 400px;"></div> 
+                </div>
+            </div>
+
+            <!-- THEORETICAL CONCLUSIONS -->
+            <div class="explanation-box border-red">
+                <h3 style="color: #ff5555; margin-top:0;">📝 Conclusions & Inferential Statistics</h3>
+                <ul>
+                    <li style="margin-bottom: 10px;"><strong>Comparisons & Unbiased Estimators:</strong> By comparing the empirical averages with the theoretical parameters, we observe that the Average of the Sampling Means is almost exactly <strong>μ (5.00)</strong>, and the Average of the Sampling Variances is almost exactly <strong>σ² (8.333)</strong>. This proves that the sample mean and the sample variance (using Bessel's correction <em>n-1</em>) are <strong>unbiased estimators</strong> of the true population parameters.</li>
+                    
+                    <li style="margin-bottom: 10px;"><strong>Usefulness in Inferential Statistics:</strong> In real-world scenarios, we never know the true population parameters (μ and σ²). These results are the cornerstone of inferential statistics because they guarantee that we can take a limited sample, compute its mean and variance iteratively using Welford's algorithm, and mathematically trust those numbers to be the best possible guess of the hidden reality.</li>
+                    
+                    <li><strong>The Effect of Increasing <em>n</em>:</strong> If you increase the number of systems (<em>n</em>) and re-run the simulation, the histograms will become narrower. While the estimators remain centered around the true values, their spread shrinks. This demonstrates a decrease in the <strong>Standard Error</strong>: as sample size increases, the variability of our estimates drops, leading to significantly higher precision and tighter confidence intervals.</li>
+                </ul>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
