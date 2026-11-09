@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 5: Numerical Integration & Normal CDF</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <h1>Homework 5: Advanced Numerical Analysis</h1>
+            <p>Riemann vs. Lebesgue Integration & Normal CDF Computation</p>
+        </header>
+
+        <main>
+            <!-- ========================================== -->
+            <!-- EXERCISE 1: RIEMANN VS LEBESGUE            -->
+            <!-- ========================================== -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: #ff79c6; border: none; font-size: 1.8em; margin-bottom: 5px;">Exercise 1: Riemann and Lebesgue Integration</h2>
+            </div>
+            
+            <!-- CONTROL PANEL EX 1 -->
+            <aside class="controls-box border-cyan">
+                <h3 style="margin-top: 0; color: #8be9fd;">Integration Settings</h3>
+                
+                <div class="input-group">
+                    <label for="functionSelect">Select Function to Integrate:</label>
+                    <select id="functionSelect">
+                        <option value="sin">f(x) = sin(x), x in [0, pi]</option>
+                        <option value="x2">f(x) = x², x in [0, 1]</option>
+                        <option value="step">f(x) = 1 if x < 0.5, 3 if x >= 0.5, x in [0, 1]</option>
+                        <option value="abs">f(x) = |x - 0.5|, x in [0, 1]</option>
+                        <option value="pathological">Dirichlet Function (1 if rational, 0 if irrational), x in [0, 1]</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="inputN">Number of Partitions / Samples (N):</label>
+                    <input type="number" id="inputN" value="100000" min="100">
+                </div>
+
+                <button id="calcIntegrationBtn">Compute Integrals</button>
+            </aside>
+
+            <!-- EMPIRICAL RESULTS EX 1 -->
+            <div class="result-box border-pink">
+                <h3 style="color: #ff79c6; margin-top:0;">Numerical Integration Results</h3>
+                <p>Riemann Integral (Domain Partitioning): <span class="highlight-data" id="riemann-out">-</span></p>
+                <p>Lebesgue Integral (Range Partitioning): <span class="highlight-data" id="lebesgue-out">-</span></p>
+                <hr style="border: 0; height: 1px; background: #444; margin: 10px 0;">
+                <p>Absolute Difference: <span class="danger-data" id="diff-out">-</span></p>
+            </div>
+
+            <!-- THEORETICAL CONCLUSIONS EX 1 -->
+            <div class="explanation-box border-purple">
+                <h3 style="color: #bd93f9; margin-top:0;">📝 Theoretical Analysis: Riemann vs. Lebesgue</h3>
+                <ul>
+                    <li style="margin-bottom: 10px;"><strong>Methodological Difference:</strong> The Riemann integral partitions the <em>domain</em> (x-axis) into subintervals and sums the areas of vertical rectangles. The Lebesgue integral partitions the <em>range</em> (y-axis) into measurable subsets, calculating the integral by multiplying each function value by the "measure" (size) of its preimage in the domain.</li>
+                    <li style="margin-bottom: 10px;"><strong>Standard Convergence:</strong> For standard Riemann-integrable functions (like continuous functions or those with finite jump discontinuities, e.g., polynomials, step functions), both numerical approaches perfectly converge to the same exact value as <em>N</em> increases.</li>
+                    <li><strong>Pathological Functions (Dirichlet):</strong> The Dirichlet function highlights the superiority of Lebesgue. Since rational and irrational numbers are infinitely dense, the function jumps infinitely often. The Riemann approach fails to converge because the domain cannot be neatly sliced. However, the Lebesgue approach recognizes that the measure of rational numbers is 0, and the measure of irrationals is 1. Thus, the Lebesgue integral flawlessly computes <em>(1 × 0) + (0 × 1) = 0</em>.</li>
+                </ul>
+            </div>
+
+            <hr class="section-divider">
+
+            <!-- ========================================== -->
+            <!-- EXERCISE 2: NORMAL CDF COMPUTATION         -->
+            <!-- ========================================== -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: #50fa7b; border: none; font-size: 1.8em; margin-bottom: 5px;">Exercise 2: Numerical Computation of the Normal CDF</h2>
+            </div>
+            
+            <!-- CONTROL PANEL EX 2 -->
+            <aside class="controls-box border-green" style="border-left-color: #50fa7b;">
+                <h3 style="margin-top: 0; color: #50fa7b;">Evaluate Normal CDF</h3>
+                
+                <div class="input-group">
+                    <label for="inputZ">Standard Normal Value (z):</label>
+                    <input type="number" id="inputZ" value="1.96" step="0.01">
+                </div>
+
+                <button id="calcCdfBtn" style="background: #50fa7b;">Compute CDF</button>
+            </aside>
+
+            <!-- EMPIRICAL RESULTS EX 2 -->
+            <div class="result-box border-cyan">
+                <h3 style="color: #8be9fd; margin-top:0;">CDF Results</h3>
+                <p>Computed CDF (Simpson's Rule): <span class="highlight-data" id="simpson-out">-</span></p>
+                <p>Reference CDF (Trusted ERF Approximation): <span class="highlight-data" id="ref-out">-</span></p>
+                <hr style="border: 0; height: 1px; background: #444; margin: 10px 0;">
+                <p>Computational Error: <span class="danger-data" id="cdf-error-out">-</span></p>
+            </div>
+
+            <!-- THEORETICAL CONCLUSIONS EX 2 -->
+            <div class="explanation-box border-red">
+                <h3 style="color: #ff5555; margin-top:0;">📝 Mathematical Analysis: Liouville's Theorem & Erf</h3>
+                <ul>
+                    <li style="margin-bottom: 10px;"><strong>Liouville's Theorem (1835):</strong> The Normal CDF is defined by the integral of the Gaussian function <em>e^(-x²)</em>. According to Liouville's theorem in differential algebra, this specific function lacks an "elementary antiderivative". This means it is mathematically impossible to express the Normal CDF using a finite combination of elementary functions (polynomials, exponentials, logarithms, trigonometric functions).</li>
+                    <li style="margin-bottom: 10px;"><strong>The Role of the Error Function (erf):</strong> To bypass this limitation, mathematicians introduced a special non-elementary function called the Error Function. It provides a formal, exact analytical representation for the CDF: <em>Φ(z) = 0.5 × [1 + erf(z / √2)]</em>.</li>
+                    <li><strong>The Necessity of Numerical Methods:</strong> While the <em>erf</em> gives us a beautiful analytical formula, it does not solve the practical computation problem. To actually evaluate <em>erf(z)</em> (and thus the CDF) for a specific number like 1.96, a computer cannot plug it into a simple formula. We are forced to rely on numerical methods—such as Simpson's Rule (numerical integration), Taylor Series expansions, or pre-computed polynomial approximations—to obtain highly accurate decimal results.</li>
+                </ul>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Link to the JavaScript logic -->
+    <script src="script.js"></script>
+</body>
+</html>
