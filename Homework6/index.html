@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homework 5: Numerical Integration & Normal CDF</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Plotly.js for interactive charts -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 </head>
 <body>
 
@@ -23,7 +25,6 @@
                 <h2 style="color: #ff79c6; border: none; font-size: 1.8em; margin-bottom: 5px;">Exercise 1: Riemann and Lebesgue Integration</h2>
             </div>
             
-            <!-- CONTROL PANEL EX 1 -->
             <aside class="controls-box border-cyan">
                 <h3 style="margin-top: 0; color: #8be9fd;">Integration Settings</h3>
                 
@@ -46,7 +47,6 @@
                 <button id="calcIntegrationBtn">Compute Integrals</button>
             </aside>
 
-            <!-- EMPIRICAL RESULTS EX 1 -->
             <div class="result-box border-pink">
                 <h3 style="color: #ff79c6; margin-top:0;">Numerical Integration Results</h3>
                 <p>Riemann Integral (Domain Partitioning): <span class="highlight-data" id="riemann-out">-</span></p>
@@ -55,13 +55,24 @@
                 <p>Absolute Difference: <span class="danger-data" id="diff-out">-</span></p>
             </div>
 
-            <!-- THEORETICAL CONCLUSIONS EX 1 -->
+            <!-- EX 1 CHARTS -->
+            <div class="charts-section" style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">
+                <div class="result-box border-cyan" style="margin-top: 0;">
+                    <h3 style="color: #8be9fd; margin-top:0;">1. Function Curve f(x)</h3>
+                    <div id="chartFunc" style="width: 100%; height: 350px;"></div>
+                </div>
+                <div class="result-box border-purple" style="margin-top: 0;">
+                    <h3 style="color: #bd93f9; margin-top:0;">2. Lebesgue Measure (Y-Axis Preimage Distribution)</h3>
+                    <div id="chartLebesgue" style="width: 100%; height: 350px;"></div>
+                </div>
+            </div>
+
             <div class="explanation-box border-purple">
                 <h3 style="color: #bd93f9; margin-top:0;">📝 Theoretical Analysis: Riemann vs. Lebesgue</h3>
                 <ul>
-                    <li style="margin-bottom: 10px;"><strong>Methodological Difference:</strong> The Riemann integral partitions the <em>domain</em> (x-axis) into subintervals and sums the areas of vertical rectangles. The Lebesgue integral partitions the <em>range</em> (y-axis) into measurable subsets, calculating the integral by multiplying each function value by the "measure" (size) of its preimage in the domain.</li>
-                    <li style="margin-bottom: 10px;"><strong>Standard Convergence:</strong> For standard Riemann-integrable functions (like continuous functions or those with finite jump discontinuities, e.g., polynomials, step functions), both numerical approaches perfectly converge to the same exact value as <em>N</em> increases.</li>
-                    <li><strong>Pathological Functions (Dirichlet):</strong> The Dirichlet function highlights the superiority of Lebesgue. Since rational and irrational numbers are infinitely dense, the function jumps infinitely often. The Riemann approach fails to converge because the domain cannot be neatly sliced. However, the Lebesgue approach recognizes that the measure of rational numbers is 0, and the measure of irrationals is 1. Thus, the Lebesgue integral flawlessly computes <em>(1 × 0) + (0 × 1) = 0</em>.</li>
+                    <li style="margin-bottom: 10px;"><strong>Methodological Difference:</strong> The Riemann integral partitions the <em>domain</em> (x-axis) into subintervals and sums the areas of vertical rectangles. The Lebesgue integral partitions the <em>range</em> (y-axis) into measurable subsets, calculating the integral by multiplying each function value by the "measure" (size) of its preimage in the domain (visualized in the histogram above).</li>
+                    <li style="margin-bottom: 10px;"><strong>Standard Convergence:</strong> For standard Riemann-integrable functions, both numerical approaches perfectly converge to the same exact value as <em>N</em> increases.</li>
+                    <li><strong>Pathological Functions (Dirichlet):</strong> The Dirichlet function highlights the superiority of Lebesgue. Riemann fails to converge because the domain cannot be neatly sliced due to infinite jumps. However, the Lebesgue approach recognizes that the measure of rational numbers is 0, and the measure of irrationals is 1. Thus, the Lebesgue integral flawlessly computes <em>(1 × 0) + (0 × 1) = 0</em>.</li>
                 </ul>
             </div>
 
@@ -74,19 +85,17 @@
                 <h2 style="color: #50fa7b; border: none; font-size: 1.8em; margin-bottom: 5px;">Exercise 2: Numerical Computation of the Normal CDF</h2>
             </div>
             
-            <!-- CONTROL PANEL EX 2 -->
-            <aside class="controls-box border-green" style="border-left-color: #50fa7b;">
-                <h3 style="margin-top: 0; color: #50fa7b;">Evaluate Normal CDF</h3>
+            <aside class="controls-box border-cyan">
+                <h3 style="margin-top: 0; color: #8be9fd;">Evaluate Normal CDF</h3>
                 
                 <div class="input-group">
                     <label for="inputZ">Standard Normal Value (z):</label>
                     <input type="number" id="inputZ" value="1.96" step="0.01">
                 </div>
 
-                <button id="calcCdfBtn" style="background: #50fa7b;">Compute CDF</button>
+                <button id="calcCdfBtn" style="background: #50fa7b; color: black;">Compute CDF</button>
             </aside>
 
-            <!-- EMPIRICAL RESULTS EX 2 -->
             <div class="result-box border-cyan">
                 <h3 style="color: #8be9fd; margin-top:0;">CDF Results</h3>
                 <p>Computed CDF (Simpson's Rule): <span class="highlight-data" id="simpson-out">-</span></p>
@@ -95,20 +104,26 @@
                 <p>Computational Error: <span class="danger-data" id="cdf-error-out">-</span></p>
             </div>
 
-            <!-- THEORETICAL CONCLUSIONS EX 2 -->
+            <!-- EX 2 CHART -->
+            <div class="charts-section" style="margin-top: 20px;">
+                <div class="result-box border-green" style="border-left-color: #50fa7b; margin-top: 0;">
+                    <h3 style="color: #50fa7b; margin-top:0;">Standard Normal PDF (Shaded Area = Computed CDF)</h3>
+                    <div id="chartPDF" style="width: 100%; height: 350px;"></div>
+                </div>
+            </div>
+
             <div class="explanation-box border-red">
                 <h3 style="color: #ff5555; margin-top:0;">📝 Mathematical Analysis: Liouville's Theorem & Erf</h3>
                 <ul>
-                    <li style="margin-bottom: 10px;"><strong>Liouville's Theorem (1835):</strong> The Normal CDF is defined by the integral of the Gaussian function <em>e^(-x²)</em>. According to Liouville's theorem in differential algebra, this specific function lacks an "elementary antiderivative". This means it is mathematically impossible to express the Normal CDF using a finite combination of elementary functions (polynomials, exponentials, logarithms, trigonometric functions).</li>
-                    <li style="margin-bottom: 10px;"><strong>The Role of the Error Function (erf):</strong> To bypass this limitation, mathematicians introduced a special non-elementary function called the Error Function. It provides a formal, exact analytical representation for the CDF: <em>Φ(z) = 0.5 × [1 + erf(z / √2)]</em>.</li>
-                    <li><strong>The Necessity of Numerical Methods:</strong> While the <em>erf</em> gives us a beautiful analytical formula, it does not solve the practical computation problem. To actually evaluate <em>erf(z)</em> (and thus the CDF) for a specific number like 1.96, a computer cannot plug it into a simple formula. We are forced to rely on numerical methods—such as Simpson's Rule (numerical integration), Taylor Series expansions, or pre-computed polynomial approximations—to obtain highly accurate decimal results.</li>
+                    <li style="margin-bottom: 10px;"><strong>Liouville's Theorem (1835):</strong> The Normal CDF is defined by the integral of the Gaussian function. According to Liouville's theorem, this function lacks an "elementary antiderivative". This means it is mathematically impossible to express the Normal CDF using a finite combination of elementary functions.</li>
+                    <li style="margin-bottom: 10px;"><strong>The Role of the Error Function (erf):</strong> To bypass this, mathematicians introduced a special non-elementary function called the Error Function. It provides a formal, exact analytical representation for the CDF: <em>Φ(z) = 0.5 × [1 + erf(z / √2)]</em>.</li>
+                    <li><strong>The Necessity of Numerical Methods:</strong> While the <em>erf</em> gives us a formula, it does not solve the practical computation problem. To evaluate <em>erf(z)</em> for a specific number, we are forced to rely on numerical methods—such as our implementation of Simpson's Rule—to obtain highly accurate decimal results.</li>
                 </ul>
             </div>
 
         </main>
     </div>
 
-    <!-- Link to the JavaScript logic -->
     <script src="script.js"></script>
 </body>
 </html>
