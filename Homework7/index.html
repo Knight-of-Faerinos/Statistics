@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework 6: Statistical Independence</title>
+    <title>Homework 7: Statistical Independence</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
 </head>
@@ -12,77 +12,109 @@
     <div class="container">
         
         <header>
-            <h1>Homework 6: Statistical Independence</h1>
-            <p>Contingency Tables, Conditional Distributions &amp; Chi-Square Test</p>
+            <h1>Homework 7: Statistical Independence</h1>
+            <p>Contingency Tables, Conditional Distributions, Chi-Square Test &amp; Residual Analysis</p>
         </header>
 
         <main>
             <!-- ========================================== -->
-            <!-- CONTROL PANEL (Bivariate Dataset Input)    -->
+            <!-- CONTROL PANEL (Presets, Generator & CSV)   -->
             <!-- ========================================== -->
             <aside class="controls-box border-cyan">
-                <h3 style="margin-top: 0; color: #8be9fd;">Bivariate Dataset (X, F)</h3>
+                <h3 style="margin-top: 0; color: #8be9fd;">1. Dataset Selection &amp; Synthetic Generator</h3>
                 
-                <div class="input-group">
-                    <label for="presetSelect">Load Example Dataset:</label>
-                    <select id="presetSelect">
-                        <option value="dependent">Preset 1: Attack Vector vs. Breach Outcome (Dependent)</option>
-                        <option value="independent">Preset 2: Server Region vs. Auth Error (Independent)</option>
-                        <option value="custom">Custom Dataset (Edit below)</option>
-                    </select>
+                <div class="inputs-row">
+                    <div style="flex: 1; min-width: 240px;">
+                        <label for="presetSelect">Load Example Dataset:</label>
+                        <select id="presetSelect">
+                            <option value="dependent">Preset 1: Attack Vector vs. Breach Outcome (Dependent, N=120)</option>
+                            <option value="independent">Preset 2: Server Region vs. Auth Error (Independent, N=120)</option>
+                            <option value="small">Preset 3: Small Sample Test (Cochran Warning, N=18)</option>
+                            <option value="custom">Custom / Synthetic / Uploaded Dataset</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 240px;">
+                        <label for="csvFileInput">Upload CSV / TXT File (<code>x, f</code>):</label>
+                        <input type="file" id="csvFileInput" accept=".csv,.txt">
+                    </div>
                 </div>
 
-                <div class="input-group">
+                <div style="margin-top: 8px; font-size: 0.85em;">
+                    <label style="display: inline-flex; align-items: center; gap: 6px; font-weight: normal; cursor: pointer;">
+                        <input type="checkbox" id="hasHeaderCheck" style="width: auto;">
+                        Skip first line (file contains column headers)
+                    </label>
+                </div>
+
+                <hr style="border: 0; height: 1px; background: #444; margin: 15px 0;">
+
+                <h3 style="margin-top: 0; color: #ffb86c; font-size: 1em;">Synthetic Bivariate Data Generator</h3>
+                <div class="inputs-row">
+                    <div style="flex: 1; min-width: 180px;">
+                        <label for="genN">Sample Size (N):</label>
+                        <input type="number" id="genN" value="300" min="15" max="10000">
+                    </div>
+                    <div style="flex: 1; min-width: 220px;">
+                        <label for="genStrength">Association Strength: <span id="genStrengthVal" style="color: #50fa7b;">60%</span></label>
+                        <input type="range" id="genStrength" min="0" max="100" value="60" style="padding: 4px 0;">
+                    </div>
+                    <div style="flex: 1; min-width: 180px;">
+                        <button id="generateBtn" type="button" style="background: #ffb86c; margin-top: 22px;">Generate Synthetic Data</button>
+                    </div>
+                </div>
+
+                <hr style="border: 0; height: 1px; background: #444; margin: 15px 0;">
+
+                <div class="input-group" style="margin-bottom: 5px;">
                     <label for="datasetInput">Raw Bivariate Observations (format: <code>x, f</code> per line):</label>
-                    <textarea id="datasetInput" rows="7">Phishing, Compromised
-Phishing, Compromised
-Phishing, Compromised
-Phishing, Blocked
-ZeroDay, Compromised
-ZeroDay, Compromised
-ZeroDay, Compromised
-ZeroDay, Compromised
-BruteForce, Blocked
-BruteForce, Blocked
-BruteForce, Blocked
-BruteForce, Blocked
-BruteForce, Compromised
-Phishing, Compromised
-BruteForce, Blocked
-ZeroDay, Compromised</textarea>
+                    <textarea id="datasetInput" rows="6"></textarea>
                 </div>
 
-                <button id="analyzeBtn">Construct Tables &amp; Test Independence</button>
+                <button id="analyzeBtn" type="button">Construct Tables &amp; Run Statistical Tests</button>
             </aside>
 
             <!-- ========================================== -->
-            <!-- CHI-SQUARE TEST SUMMARY                    -->
+            <!-- CHI-SQUARE, CRAMER'S V & COCHRAN SUMMARY   -->
             <!-- ========================================== -->
             <div class="result-box border-pink">
-                <h3 style="color: #ff79c6; margin-top: 0;">Chi-Square Test of Independence Results</h3>
+                <h3 style="color: #ff79c6; margin-top: 0;">Statistical Independence Test Summary</h3>
                 <p>Total Observations (N): <span class="highlight-data" id="total-n-out">-</span></p>
                 <p>Degrees of Freedom (df): <span class="highlight-data" id="df-out">-</span></p>
                 <p>Chi-Square Statistic (&chi;&sup2;): <span class="highlight-data" id="chi2-out">-</span></p>
-                <p>p-value: <span class="highlight-data" id="pvalue-out">-</span></p>
+                <p>Exact p-value: <span class="highlight-data" id="pvalue-out">-</span></p>
+                <p>Effect Size &mdash; Cram&eacute;r's V: <span class="highlight-data" id="cramers-v-out">-</span></p>
+                <p>Cochran's Validity Check: <span class="highlight-data" id="cochran-out">-</span></p>
                 <hr style="border: 0; height: 1px; background: #444; margin: 12px 0;">
                 <p>Statistical Verdict (&alpha; = 0.05): <span class="success-data" id="verdict-out">-</span></p>
             </div>
 
             <!-- ========================================== -->
-            <!-- CONTINGENCY & FREQUENCY TABLES             -->
+            <!-- 1. OBSERVED CONTINGENCY TABLE & MARGINALS  -->
             <!-- ========================================== -->
             <div class="result-box border-cyan">
                 <h3 style="color: #8be9fd; margin-top: 0;">1. Contingency Table: Observed Frequencies (O&#7522;&#11388;) &amp; Marginals</h3>
-                <p style="font-size: 0.9em; margin-bottom: 10px;">Joint counts of pairs (x&#7522;, f&#11388;), with row and column marginal totals (and marginal relative frequencies in parentheses).</p>
+                <p style="font-size: 0.9em; margin-bottom: 10px;">Joint counts of pairs (x&#7522;, f&#11388;) with joint relative frequencies in parentheses, alongside row marginal P(X) and column marginal P(F).</p>
                 <div class="table-wrapper" id="observed-table-container"></div>
             </div>
 
+            <!-- ========================================== -->
+            <!-- 2. SYMMETRIC CONDITIONAL FREQUENCIES       -->
+            <!-- ========================================== -->
             <div class="result-box border-purple">
-                <h3 style="color: #bd93f9; margin-top: 0;">2. Conditional Frequencies: P(F = f&#11388; | X = x&#7522;)</h3>
-                <p style="font-size: 0.9em; margin-bottom: 10px;">Row-normalized relative frequencies. Under statistical independence, all rows exhibit identical conditional distributions equal to the column marginals.</p>
-                <div class="table-wrapper" id="conditional-table-container"></div>
+                <h3 style="color: #bd93f9; margin-top: 0;">2A. Row-Conditional Frequencies: P(F = f&#11388; | X = x&#7522;)</h3>
+                <p style="font-size: 0.9em; margin-bottom: 10px;">Distribution of <em>F</em> given each category of <em>X</em>. Under independence, every row matches the marginal distribution <em>P(F)</em>.</p>
+                <div class="table-wrapper" id="cond-row-table-container"></div>
             </div>
 
+            <div class="result-box border-purple">
+                <h3 style="color: #bd93f9; margin-top: 0;">2B. Column-Conditional Frequencies: P(X = x&#7522; | F = f&#11388;)</h3>
+                <p style="font-size: 0.9em; margin-bottom: 10px;">Distribution of <em>X</em> given each category of <em>F</em>. Demonstrates the symmetry of independence: <em>P(X | F) = P(X)</em> across all columns.</p>
+                <div class="table-wrapper" id="cond-col-table-container"></div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 3. EXPECTED FREQUENCIES                    -->
+            <!-- ========================================== -->
             <div class="result-box">
                 <h3 style="color: #50fa7b; margin-top: 0;">3. Expected Frequencies Under Independence (E&#7522;&#11388;)</h3>
                 <p style="font-size: 0.9em; margin-bottom: 10px;">Theoretical cell counts computed as <em>E&#7522;&#11388; = (Row Total&#7522; &times; Col Total&#11388;) / N</em> assuming P(X, F) = P(X)P(F).</p>
@@ -90,11 +122,25 @@ ZeroDay, Compromised</textarea>
             </div>
 
             <!-- ========================================== -->
-            <!-- VISUALIZATION (Observed vs Expected)       -->
+            <!-- 4. PEARSON STANDARDIZED RESIDUALS          -->
+            <!-- ========================================== -->
+            <div class="result-box border-red">
+                <h3 style="color: #ff5555; margin-top: 0;">4. Pearson Standardized Residuals: R&#7522;&#11388; = (O&#7522;&#11388; &minus; E&#7522;&#11388;) / &radic;E&#7522;&#11388;</h3>
+                <p style="font-size: 0.9em; margin-bottom: 10px;">Measures cell-by-cell departure from independence. Values with <strong>|R&#7522;&#11388;| &gt; 2.0</strong> indicate statistically significant excess (green) or deficit (red) at &alpha; &approx; 0.05.</p>
+                <div class="table-wrapper" id="residuals-table-container"></div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 5. VISUALIZATIONS (BAR CHART & HEATMAP)    -->
             <!-- ========================================== -->
             <div class="result-box border-cyan">
-                <h3 style="color: #8be9fd; margin-top: 0;">4. Visual Comparison: Observed vs. Expected Counts</h3>
+                <h3 style="color: #8be9fd; margin-top: 0;">5A. Visual Comparison: Observed vs. Expected Counts</h3>
                 <div id="chartComparison"></div>
+            </div>
+
+            <div class="result-box border-pink">
+                <h3 style="color: #ff79c6; margin-top: 0;">5B. Standardized Residuals Heatmap (Where Dependence Occurs)</h3>
+                <div id="chartResiduals"></div>
             </div>
 
             <!-- ========================================== -->
@@ -105,18 +151,18 @@ ZeroDay, Compromised</textarea>
             <div class="explanation-box border-purple">
                 <h3 style="color: #bd93f9; margin-top: 0;">&#128221; Theoretical Framework: Statistical Independence</h3>
                 <ul>
-                    <li style="margin-bottom: 10px;"><strong>Probabilistic Definition:</strong> Two random variables <em>X</em> and <em>F</em> are statistically independent if and only if their joint probability distribution factorizes into the product of their marginal distributions: <em>P(X = x&#7522;, F = f&#11388;) = P(X = x&#7522;) &middot; P(F = f&#11388;)</em> for all pairs <em>(x&#7522;, f&#11388;)</em>.</li>
-                    <li style="margin-bottom: 10px;"><strong>Conditional Invariance:</strong> Equivalently, knowing the realization of <em>X</em> provides zero information about <em>F</em>: <em>P(F = f&#11388; | X = x&#7522;) = P(F = f&#11388;)</em>. In empirical data, this means the conditional row profiles remain invariant across all categories of <em>X</em>.</li>
-                    <li><strong>Chi-Square Test Logic:</strong> Pearson's &chi;&sup2; statistic aggregates the normalized squared deviations between observed counts (<em>O&#7522;&#11388;</em>) and theoretical independence counts (<em>E&#7522;&#11388;</em>). Under the null hypothesis of independence (<em>H&#8320;</em>), &chi;&sup2; follows a chi-square distribution with <em>df = (r &minus; 1)(c &minus; 1)</em> degrees of freedom. A low p-value (&lt; 0.05) rejects <em>H&#8320;</em>, indicating significant statistical dependence.</li>
+                    <li style="margin-bottom: 10px;"><strong>Probabilistic Definition:</strong> Two random variables <em>X</em> and <em>F</em> are statistically independent if and only if their joint probability factorizes into the product of their marginals: <em>P(X = x&#7522;, F = f&#11388;) = P(X = x&#7522;) &middot; P(F = f&#11388;)</em> for every pair <em>(x&#7522;, f&#11388;)</em>.</li>
+                    <li style="margin-bottom: 10px;"><strong>Symmetric Conditional Invariance:</strong> Independence holds if and only if <em>P(F = f&#11388; | X = x&#7522;) = P(F = f&#11388;)</em> for all <em>x&#7522;</em>, which is mathematically equivalent to <em>P(X = x&#7522; | F = f&#11388;) = P(X = x&#7522;)</em> for all <em>f&#11388;</em>.</li>
+                    <li style="margin-bottom: 10px;"><strong>Chi-Square, Cochran's Condition &amp; Cram&eacute;r's V:</strong> Pearson's &chi;&sup2; aggregates squared standardized residuals (&chi;&sup2; = &Sigma; R&#7522;&#11388;&sup2;) and follows a &chi;&sup2; distribution with <em>df = (r &minus; 1)(c &minus; 1)</em> provided Cochran's rule holds (at least 80% of expected cells E&#7522;&#11388; &ge; 5 and none &lt; 1). Because &chi;&sup2; scales linearly with sample size <em>N</em>, <strong>Cram&eacute;r's V</strong> normalizes it to [0, 1] to quantify true association strength independently of <em>N</em>.</li>
                 </ul>
             </div>
 
             <div class="explanation-box border-red">
-                <h3 style="color: #ff5555; margin-top: 0;">&#128221; Conclusions: Association vs. Causality</h3>
+                <h3 style="color: #ff5555; margin-top: 0;">&#128221; Conclusions: Statistical Association vs. Causality</h3>
                 <ul>
-                    <li style="margin-bottom: 10px;"><strong>Interpreting the Output:</strong> When the observed conditional frequencies diverge substantially from the marginal distribution, &chi;&sup2; grows large and the variables are <strong>statistically dependent</strong> (associated). Conversely, small fluctuations around <em>E&#7522;&#11388;</em> yield a high p-value, consistent with <strong>statistical independence</strong>.</li>
-                    <li style="margin-bottom: 10px;"><strong>Association is Symmetric; Causality is Directional:</strong> A contingency table and its &chi;&sup2; statistic are completely symmetric—swapping <em>X</em> and <em>F</em> produces the exact same value. Statistical dependence proves that two variables co-vary, not that <em>X</em> causes <em>F</em>.</li>
-                    <li><strong>Confounding &amp; Spurious Correlations:</strong> Dependence between <em>X</em> and <em>F</em> may arise from an unobserved third variable (a <em>confounder Z</em>) driving both, or simply from sampling artifacts in small datasets. Establishing true causality requires controlled interventions or structural causal models rather than observational contingency tables alone.</li>
+                    <li style="margin-bottom: 10px;"><strong>Interpreting Significance vs. Effect Size:</strong> Using the synthetic generator above, keeping a small association strength (e.g., 20%) while increasing <em>N</em> from 50 to 3,000 causes the p-value to drop below 0.0001 while Cram&eacute;r's V stays near 0.15. Statistical significance proves an association is unlikely due to chance, whereas effect size measures its practical magnitude.</li>
+                    <li style="margin-bottom: 10px;"><strong>Association is Symmetric; Causality is Directional:</strong> Swapping <em>X</em> and <em>F</em> yields the exact same &chi;&sup2;, p-value, and Cram&eacute;r's V. Contingency tables detect co-variation, never causal direction.</li>
+                    <li><strong>Confounding &amp; Spurious Correlations:</strong> Strong statistical dependence between <em>X</em> and <em>F</em> can be induced by an unobserved third variable (a <em>confounder Z</em>, such as organization size or network exposure) driving both variables simultaneously. Proving causality requires randomized experiments or structural causal inference rather than observational counts alone.</li>
                 </ul>
             </div>
 
