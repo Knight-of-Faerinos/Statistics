@@ -1,13 +1,50 @@
-// ==========================================
-// PRESET DATASETS & EVENT LISTENERS
-// ==========================================
+function buildPresetDependent() {
+    // N = 120 observations with strong association (satisfies Cochran's rule)
+    const counts = [
+        ['Phishing', 'Blocked', 12],
+        ['Phishing', 'Detected', 22],
+        ['Phishing', 'Compromised', 16],
+        ['ZeroDay', 'Blocked', 3],
+        ['ZeroDay', 'Detected', 7],
+        ['ZeroDay', 'Compromised', 20],
+        ['BruteForce', 'Blocked', 31],
+        ['BruteForce', 'Detected', 6],
+        ['BruteForce', 'Compromised', 3]
+    ];
+    let rows = [];
+    for (const [x, f, n] of counts) {
+        for (let i = 0; i < n; i++) rows.push(`${x}, ${f}`);
+    }
+    return rows.join('\n');
+}
+
+function buildPresetIndependent() {
+    // N = 120 observations with exact conditional invariance across regions
+    const counts = [
+        ['EU-Server', 'Timeout', 20],
+        ['EU-Server', 'InvalidToken', 16],
+        ['EU-Server', 'RateLimited', 14],
+        ['US-Server', 'Timeout', 16],
+        ['US-Server', 'InvalidToken', 13],
+        ['US-Server', 'RateLimited', 11],
+        ['Asia-Server', 'Timeout', 12],
+        ['Asia-Server', 'InvalidToken', 10],
+        ['Asia-Server', 'RateLimited', 8]
+    ];
+    let rows = [];
+    for (const [x, f, n] of counts) {
+        for (let i = 0; i < n; i++) rows.push(`${x}, ${f}`);
+    }
+    return rows.join('\n');
+}
+
 const presets = {
-    dependent: `Phishing, Compromised
-Phishing, Compromised
+    dependent: buildPresetDependent(),
+    independent: buildPresetIndependent(),
+    small: `Phishing, Compromised
 Phishing, Compromised
 Phishing, Compromised
 Phishing, Blocked
-ZeroDay, Compromised
 ZeroDay, Compromised
 ZeroDay, Compromised
 ZeroDay, Compromised
@@ -17,29 +54,16 @@ BruteForce, Blocked
 BruteForce, Blocked
 BruteForce, Blocked
 BruteForce, Blocked
-BruteForce, Blocked
-BruteForce, Blocked
 BruteForce, Compromised
 Phishing, Compromised
-BruteForce, Blocked`,
-
-    independent: `EU-Server, Timeout
-EU-Server, Timeout
-EU-Server, InvalidToken
-EU-Server, InvalidToken
-EU-Server, InvalidToken
-US-Server, Timeout
-US-Server, Timeout
-US-Server, InvalidToken
-US-Server, InvalidToken
-US-Server, InvalidToken
-Asia-Server, Timeout
-Asia-Server, Timeout
-Asia-Server, InvalidToken
-Asia-Server, InvalidToken
-Asia-Server, InvalidToken`
+BruteForce, Blocked
+ZeroDay, Compromised
+BruteForce, Blocked`
 };
 
+// ==========================================
+// EVENT LISTENERS (Presets, CSV, Generator)
+// ==========================================
 document.getElementById('presetSelect').addEventListener('change', (e) => {
     const selected = e.target.value;
     if (presets[selected]) {
@@ -52,14 +76,80 @@ document.getElementById('datasetInput').addEventListener('input', () => {
     document.getElementById('presetSelect').value = 'custom';
 });
 
+document.getElementById('genStrength').addEventListener('input', (e) => {
+    document.getElementById('genStrengthVal').innerText = `${e.target.value}%`;
+});
+
+document.getElementById('generateBtn').addEventListener('click', generateSyntheticDataset);
 document.getElementById('analyzeBtn').addEventListener('click', analyzeDataset);
 
+document.getElementById('csvFileInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        let lines = event.target.result.split(/\r?\n/).filter(l => l.trim() !== '');
+        if (document.getElementById('hasHeaderCheck').checked && lines.length > 0) {
+            lines.shift();
+        }
+        document.getElementById('datasetInput').value = lines.join('\n');
+        document.getElementById('presetSelect').value = 'custom';
+        analyzeDataset();
+    };
+    reader.readAsText(file);
+});
+
 // ==========================================
-// MAIN ANALYSIS ENGINE
+// SYNTHETIC BIVARIATE DATASET GENERATOR
+// ==========================================
+function generateSyntheticDataset() {
+    const N = Math.max(15, Math.min(20000, parseInt(document.getElementById('genN').value) || 300));
+    const strength = parseInt(document.getElementById('genStrength').value) / 100; // [0, 1]
+
+    const xCats = ['Phishing', 'ZeroDay', 'BruteForce'];
+    const xMarginals = [0.45, 0.20, 0.35];
+
+    const fCats = ['Blocked', 'Detected', 'Compromised'];
+    const fMarginals = [0.50, 0.30, 0.20];
+
+    // Strong dependence conditional profiles P(F | X_i)
+    const depProfiles = [
+        [0.25, 0.45, 0.30], // Phishing
+        [0.10, 0.20, 0.70], // ZeroDay
+        [0.80, 0.15, 0.05]  // BruteForce
+    ];
+
+    function sampleCategorical(probs) {
+        const u = Math.random();
+        let cum = 0;
+        for (let i = 0; i < probs.length; i++) {
+            cum += probs[i];
+            if (u <= cum) return i;
+        }
+        return probs.length - 1;
+    }
+
+    let generatedLines = [];
+    for (let i = 0; i < N; i++) {
+        const xIdx = sampleCategorical(xMarginals);
+        // Convex interpolation between independence P(F) and dependence P_dep(F | X)
+        const condProbs = fMarginals.map((pMarg, j) => (1 - strength) * pMarg + strength * depProfiles[xIdx][j]);
+        const fIdx = sampleCategorical(condProbs);
+        generatedLines.push(`${xCats[xIdx]}, ${fCats[fIdx]}`);
+    }
+
+    document.getElementById('datasetInput').value = generatedLines.join('\n');
+    document.getElementById('presetSelect').value = 'custom';
+    analyzeDataset();
+}
+
+// ==========================================
+// MAIN STATISTICAL ANALYSIS ENGINE
 // ==========================================
 function analyzeDataset() {
     const rawText = document.getElementById('datasetInput').value.trim();
-    const lines = rawText.split('\n');
+    const lines = rawText.split(/\r?\n/);
 
     let pairs = [];
     let xSet = new Set();
@@ -70,7 +160,6 @@ function analyzeDataset() {
         line = line.trim();
         if (!line) continue;
 
-        // Support comma or semicolon separated values
         const parts = line.includes(',') ? line.split(',') : line.split(';');
         if (parts.length >= 2) {
             const xVal = parts[0].trim();
@@ -94,13 +183,12 @@ function analyzeDataset() {
         return;
     }
 
-    // Map category names to matrix indices
     const xIndex = {};
     xCategories.forEach((val, idx) => xIndex[val] = idx);
     const fIndex = {};
     fCategories.forEach((val, idx) => fIndex[val] = idx);
 
-    // 2. CONSTRUCT OBSERVED CONTINGENCY TABLE & MARGINALS
+    // 2. OBSERVED CONTINGENCY TABLE & MARGINALS
     let observed = Array.from({ length: numRows }, () => Array(numCols).fill(0));
     let rowTotals = Array(numRows).fill(0);
     let colTotals = Array(numCols).fill(0);
@@ -113,51 +201,89 @@ function analyzeDataset() {
         colTotals[c]++;
     }
 
-    // 3. COMPUTE CONDITIONAL & EXPECTED FREQUENCIES + CHI-SQUARE
-    let conditional = Array.from({ length: numRows }, () => Array(numCols).fill(0));
+    // 3. CONDITIONAL FREQUENCIES, EXPECTED COUNTS, RESIDUALS & CHI-SQUARE
+    let condRow = Array.from({ length: numRows }, () => Array(numCols).fill(0));
+    let condCol = Array.from({ length: numRows }, () => Array(numCols).fill(0));
     let expected = Array.from({ length: numRows }, () => Array(numCols).fill(0));
+    let residuals = Array.from({ length: numRows }, () => Array(numCols).fill(0));
+
     let chiSquare = 0;
+    let cellsGe5 = 0;
+    let minExpected = Infinity;
+    const totalCells = numRows * numCols;
 
     for (let r = 0; r < numRows; r++) {
         for (let c = 0; c < numCols; c++) {
-            // Conditional frequency: P(F = f_j | X = x_i)
-            conditional[r][c] = rowTotals[r] > 0 ? (observed[r][c] / rowTotals[r]) : 0;
+            // Row-conditional P(F = f_j | X = x_i)
+            condRow[r][c] = rowTotals[r] > 0 ? (observed[r][c] / rowTotals[r]) : 0;
 
-            // Expected frequency under independence: E_ij = (Row_i * Col_j) / N
+            // Column-conditional P(X = x_i | F = f_j)
+            condCol[r][c] = colTotals[c] > 0 ? (observed[r][c] / colTotals[c]) : 0;
+
+            // Expected frequency under independence E_ij
             const expVal = (rowTotals[r] * colTotals[c]) / N;
             expected[r][c] = expVal;
 
-            // Accumulate Chi-Square statistic
+            if (expVal >= 5) cellsGe5++;
+            if (expVal < minExpected) minExpected = expVal;
+
+            // Pearson Standardized Residual R_ij = (O_ij - E_ij) / sqrt(E_ij)
             if (expVal > 0) {
-                chiSquare += Math.pow(observed[r][c] - expVal, 2) / expVal;
+                const res = (observed[r][c] - expVal) / Math.sqrt(expVal);
+                residuals[r][c] = res;
+                chiSquare += res * res;
             }
         }
     }
 
-    // 4. DEGREES OF FREEDOM & P-VALUE
+    // 4. DEGREES OF FREEDOM, P-VALUE, CRAMER'S V & COCHRAN CHECK
     const df = (numRows - 1) * (numCols - 1);
     const pValue = chiSquarePValue(chiSquare, df);
+
+    const minDim = Math.min(numRows - 1, numCols - 1);
+    const cramersV = minDim > 0 ? Math.sqrt(chiSquare / (N * minDim)) : 0;
+
+    let strengthLabel = "Negligible";
+    if (cramersV >= 0.50) strengthLabel = "Strong Association";
+    else if (cramersV >= 0.30) strengthLabel = "Moderate Association";
+    else if (cramersV >= 0.10) strengthLabel = "Weak Association";
+
+    const pctGe5 = (cellsGe5 / totalCells) * 100;
+    const cochranValid = (pctGe5 >= 80 && minExpected >= 1);
 
     // 5. UPDATE SUMMARY RESULTS
     document.getElementById('total-n-out').innerText = N;
     document.getElementById('df-out').innerText = df;
     document.getElementById('chi2-out').innerText = chiSquare.toFixed(4);
     document.getElementById('pvalue-out').innerText = pValue < 0.0001 ? pValue.toExponential(4) : pValue.toFixed(4);
+    document.getElementById('cramers-v-out').innerText = `${cramersV.toFixed(4)} (${strengthLabel})`;
+
+    const cochranEl = document.getElementById('cochran-out');
+    if (cochranValid) {
+        cochranEl.innerText = `Valid (${pctGe5.toFixed(0)}% of expected cells ≥ 5, min Eᵢⱼ = ${minExpected.toFixed(2)})`;
+        cochranEl.className = "success-data";
+    } else {
+        cochranEl.innerText = `Warning (${pctGe5.toFixed(0)}% of expected cells ≥ 5, min Eᵢⱼ = ${minExpected.toFixed(2)}) — Increase N`;
+        cochranEl.className = "danger-data";
+    }
 
     const verdictEl = document.getElementById('verdict-out');
     if (pValue < 0.05) {
-        verdictEl.innerText = "Reject H₀ → Statistically Dependent (Associated)";
+        verdictEl.innerText = `Reject H₀ → Statistically Dependent (${strengthLabel})`;
         verdictEl.className = "danger-data";
     } else {
         verdictEl.innerText = "Fail to Reject H₀ → Statistically Independent";
         verdictEl.className = "success-data";
     }
 
-    // 6. RENDER HTML TABLES & PLOTLY CHART
+    // 6. RENDER TABLES & CHARTS
     renderObservedTable(xCategories, fCategories, observed, rowTotals, colTotals, N);
-    renderConditionalTable(xCategories, fCategories, conditional, colTotals, N);
+    renderRowConditionalTable(xCategories, fCategories, condRow, colTotals, N);
+    renderColConditionalTable(xCategories, fCategories, condCol, rowTotals, N);
     renderExpectedTable(xCategories, fCategories, expected, rowTotals, colTotals, N);
+    renderResidualsTable(xCategories, fCategories, residuals);
     renderComparisonChart(xCategories, fCategories, observed, expected);
+    renderResidualsHeatmap(xCategories, fCategories, residuals);
 }
 
 // ==========================================
@@ -178,7 +304,6 @@ function renderObservedTable(rows, cols, observed, rowTotals, colTotals, N) {
         html += `<td class="marginal-cell">${rowTotals[r]} (${rowMargPct}%)</td></tr>`;
     }
 
-    // Column marginals row
     html += '<tr><th>Marginal P(F)</th>';
     for (let c = 0; c < cols.length; c++) {
         const colMargPct = ((colTotals[c] / N) * 100).toFixed(1);
@@ -189,7 +314,7 @@ function renderObservedTable(rows, cols, observed, rowTotals, colTotals, N) {
     document.getElementById('observed-table-container').innerHTML = html;
 }
 
-function renderConditionalTable(rows, cols, conditional, colTotals, N) {
+function renderRowConditionalTable(rows, cols, condRow, colTotals, N) {
     let html = '<table><thead><tr><th>P(F | X)</th>';
     cols.forEach(c => html += `<th>${c}</th>`);
     html += '<th>Row Sum</th></tr></thead><tbody>';
@@ -197,13 +322,12 @@ function renderConditionalTable(rows, cols, conditional, colTotals, N) {
     for (let r = 0; r < rows.length; r++) {
         html += `<tr><th>X = ${rows[r]}</th>`;
         for (let c = 0; c < cols.length; c++) {
-            const pct = (conditional[r][c] * 100).toFixed(2);
-            html += `<td>${conditional[r][c].toFixed(4)} <span style="color:#bd93f9;">(${pct}%)</span></td>`;
+            const pct = (condRow[r][c] * 100).toFixed(2);
+            html += `<td>${condRow[r][c].toFixed(4)} <span style="color:#bd93f9;">(${pct}%)</span></td>`;
         }
         html += `<td class="marginal-cell">1.0000 (100%)</td></tr>`;
     }
 
-    // Add Marginal P(F) row at the bottom for direct visual comparison
     html += '<tr><th>Marginal P(F)</th>';
     for (let c = 0; c < cols.length; c++) {
         const margProb = colTotals[c] / N;
@@ -212,7 +336,32 @@ function renderConditionalTable(rows, cols, conditional, colTotals, N) {
     }
     html += `<td class="marginal-cell">1.0000 (100%)</td></tr></tbody></table>`;
 
-    document.getElementById('conditional-table-container').innerHTML = html;
+    document.getElementById('cond-row-table-container').innerHTML = html;
+}
+
+function renderColConditionalTable(rows, cols, condCol, rowTotals, N) {
+    let html = '<table><thead><tr><th>P(X | F)</th>';
+    cols.forEach(c => html += `<th>F = ${c}</th>`);
+    html += '<th>Marginal P(X)</th></tr></thead><tbody>';
+
+    for (let r = 0; r < rows.length; r++) {
+        html += `<tr><th>${rows[r]}</th>`;
+        for (let c = 0; c < cols.length; c++) {
+            const pct = (condCol[r][c] * 100).toFixed(2);
+            html += `<td>${condCol[r][c].toFixed(4)} <span style="color:#8be9fd;">(${pct}%)</span></td>`;
+        }
+        const margProb = rowTotals[r] / N;
+        const pct = (margProb * 100).toFixed(2);
+        html += `<td class="marginal-cell">${margProb.toFixed(4)} (${pct}%)</td></tr>`;
+    }
+
+    html += '<tr><th>Col Sum</th>';
+    for (let c = 0; c < cols.length; c++) {
+        html += `<td class="marginal-cell">1.0000 (100%)</td>`;
+    }
+    html += `<td class="marginal-cell">1.0000 (100%)</td></tr></tbody></table>`;
+
+    document.getElementById('cond-col-table-container').innerHTML = html;
 }
 
 function renderExpectedTable(rows, cols, expected, rowTotals, colTotals, N) {
@@ -223,7 +372,8 @@ function renderExpectedTable(rows, cols, expected, rowTotals, colTotals, N) {
     for (let r = 0; r < rows.length; r++) {
         html += `<tr><th>${rows[r]}</th>`;
         for (let c = 0; c < cols.length; c++) {
-            html += `<td>${expected[r][c].toFixed(2)}</td>`;
+            const lowFlag = expected[r][c] < 5 ? ' style="color:#ffb86c;" title="Expected count < 5"' : '';
+            html += `<td${lowFlag}>${expected[r][c].toFixed(2)}</td>`;
         }
         html += `<td class="marginal-cell">${rowTotals[r]}</td></tr>`;
     }
@@ -237,8 +387,30 @@ function renderExpectedTable(rows, cols, expected, rowTotals, colTotals, N) {
     document.getElementById('expected-table-container').innerHTML = html;
 }
 
+function renderResidualsTable(rows, cols, residuals) {
+    let html = '<table><thead><tr><th>Rᵢⱼ</th>';
+    cols.forEach(c => html += `<th>${c}</th>`);
+    html += '</tr></thead><tbody>';
+
+    for (let r = 0; r < rows.length; r++) {
+        html += `<tr><th>${rows[r]}</th>`;
+        for (let c = 0; c < cols.length; c++) {
+            const val = residuals[r][c];
+            const sign = val >= 0 ? '+' : '';
+            let style = '';
+            if (val > 2.0) style = ' style="color:#50fa7b; font-weight:bold;"';
+            else if (val < -2.0) style = ' style="color:#ff5555; font-weight:bold;"';
+            html += `<td${style}>${sign}${val.toFixed(3)}</td>`;
+        }
+        html += '</tr>';
+    }
+    html += '</tbody></table>';
+
+    document.getElementById('residuals-table-container').innerHTML = html;
+}
+
 // ==========================================
-// PLOTLY GROUPED BAR CHART
+// PLOTLY CHARTS (Bar Comparison & Heatmap)
 // ==========================================
 function renderComparisonChart(rows, cols, observed, expected) {
     let labels = [];
@@ -283,6 +455,47 @@ function renderComparisonChart(rows, cols, observed, expected) {
     Plotly.newPlot('chartComparison', [traceObserved, traceExpected], layout);
 }
 
+function renderResidualsHeatmap(rows, cols, residuals) {
+    // Reverse rows so top row in table appears at top of heatmap
+    const revRows = [...rows].reverse();
+    const revZ = [...residuals].reverse();
+    const textLabels = revZ.map(row => row.map(v => `${v >= 0 ? '+' : ''}${v.toFixed(2)}`));
+
+    const maxAbs = Math.max(2.5, ...residuals.flat().map(Math.abs));
+
+    const traceHeatmap = {
+        x: cols,
+        y: revRows,
+        z: revZ,
+        text: textLabels,
+        texttemplate: '%{text}',
+        textfont: { color: '#ffffff', size: 13 },
+        type: 'heatmap',
+        zmin: -maxAbs,
+        zmax: maxAbs,
+        colorscale: [
+            [0.0, '#ff5555'],
+            [0.5, '#252533'],
+            [1.0, '#50fa7b']
+        ],
+        colorbar: {
+            title: 'Rᵢⱼ',
+            titleside: 'right'
+        }
+    };
+
+    const layout = {
+        plot_bgcolor: '#252533',
+        paper_bgcolor: '#1e1e29',
+        font: { color: '#d1d1e0', family: 'Courier New' },
+        xaxis: { title: 'Variable F' },
+        yaxis: { title: 'Variable X' },
+        margin: { l: 110, r: 40, t: 30, b: 50 }
+    };
+
+    Plotly.newPlot('chartResiduals', [traceHeatmap], layout);
+}
+
 // ==========================================
 // EXACT CHI-SQUARE P-VALUE (Incomplete Gamma)
 // ==========================================
@@ -311,7 +524,6 @@ function logGamma(z) {
 function upperRegularizedGamma(a, x) {
     const gln = logGamma(a);
     if (x < a + 1.0) {
-        // Series representation for lower gamma, then subtract from 1
         let ap = a;
         let sum = 1.0 / a;
         let del = sum;
@@ -324,7 +536,6 @@ function upperRegularizedGamma(a, x) {
         const lowerP = sum * Math.exp(-x + a * Math.log(x) - gln);
         return Math.max(0, Math.min(1, 1.0 - lowerP));
     } else {
-        // Continued fraction (Lentz's method) for upper gamma Q(a, x)
         let b = x + 1.0 - a;
         let c = 1.0 / 1e-30;
         let d = 1.0 / b;
@@ -345,7 +556,9 @@ function upperRegularizedGamma(a, x) {
     }
 }
 
-// Run analysis on page load
+// ==========================================
+// INITIALIZE ON PAGE LOAD
+// ==========================================
 window.onload = () => {
     document.getElementById('datasetInput').value = presets.dependent;
     analyzeDataset();
