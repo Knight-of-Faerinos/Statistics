@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework 8: Modes of Convergence &amp; Bayesian Inference</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <h1>Homework 8: Asymptotic Convergence &amp; Bayesian Inference</h1>
+            <p>Modes of Probabilistic Convergence, the &radic;n Scaling Law &amp; Bayesian Updating</p>
+        </header>
+
+        <main>
+            <!-- ========================================================== -->
+            <!-- PART 1: MODES OF CONVERGENCE IN PROBABILITY THEORY         -->
+            <!-- ========================================================== -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: #ff79c6; border: none; font-size: 1.7em; margin-bottom: 5px;">Part 1: Modes of Convergence in Probability Theory</h2>
+            </div>
+
+            <!-- THEORETICAL EXPLANATION: 4 MODES OF CONVERGENCE -->
+            <div class="explanation-box border-purple" style="margin-top: 0;">
+                <h3 style="color: #bd93f9; margin-top: 0;">&#128221; The Four Main Modes of Convergence &amp; Their Hierarchy</h3>
+                <p>Let <em>X&#8345;</em> be a sequence of random variables and <em>X</em> be a target random variable defined on the same probability space. Probability theory distinguishes four fundamental notions of convergence as <em>n &rarr; &infin;</em>:</p>
+                <ul>
+                    <li style="margin-bottom: 12px;">
+                        <strong>1. Mean-Square Convergence (L&sup2; / Quadratic Mean):</strong>
+                        <br><em>Definition:</em> <code>E[|X&#8345; &minus; X|&sup2;] &rarr; 0</code> as <em>n &rarr; &infin;</em>.
+                        <br><em>Interpretation &amp; Role:</em> Both the bias and the variance of the error must vanish asymptotically. By Chebyshev's inequality, L&sup2; convergence strictly implies convergence in probability. In statistics, an estimator with MSE &rarr; 0 is <em>mean-square consistent</em> (e.g., the sample mean X&#772;&#8345; when &sigma;&sup2; &lt; &infin;, since E[(X&#772;&#8345; &minus; &mu;)&sup2;] = &sigma;&sup2;/n &rarr; 0).
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <strong>2. Almost Sure Convergence (a.s. / Strong Convergence):</strong>
+                        <br><em>Definition:</em> <code>P({&omega; &isin; &Omega; : lim&#8345;&rarr;&infin; X&#8345;(&omega;) = X(&omega;)}) = 1</code>.
+                        <br><em>Interpretation &amp; Role:</em> With probability 1, every individual sample trajectory <em>X&#8345;(&omega;)</em> eventually settles permanently onto <em>X(&omega;)</em>. This is the foundation of Kolmogorov's <strong>Strong Law of Large Numbers (SLLN)</strong>: <code>X&#772;&#8345; &rarr; &mu; a.s.</code> whenever <code>E[|X&#7522;|] &lt; &infin;</code>.
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <strong>3. Convergence in Probability (&rarr;&#7510; / Weak Convergence):</strong>
+                        <br><em>Definition:</em> For every tolerance <code>&varepsilon; &gt; 0</code>, <code>lim&#8345;&rarr;&infin; P(|X&#8345; &minus; X| &gt; &varepsilon;) = 0</code>.
+                        <br><em>Interpretation &amp; Role:</em> The probability of observing a deviation larger than &varepsilon; becomes negligible at step <em>n</em>, even if rare isolated spikes still occur along individual paths. This underpins Khinchin's <strong>Weak Law of Large Numbers (WLLN)</strong> and defines <em>weak consistency</em> of statistical estimators.
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <strong>4. Convergence in Distribution (&rarr;&#7496; / Weak* Convergence):</strong>
+                        <br><em>Definition:</em> <code>lim&#8345;&rarr;&infin; F&#8345;(x) = F(x)</code> at every continuity point <em>x</em> of the limiting CDF <em>F</em>.
+                        <br><em>Interpretation &amp; Role:</em> The random variables need not even live on the same probability space; only their probability laws approach a limiting distribution. This is the core mode of the <strong>Central Limit Theorem (CLT)</strong>, where normalized sums converge in law to a Gaussian distribution.
+                    </li>
+                </ul>
+
+                <div style="background-color: #252533; padding: 14px; border-radius: 6px; margin-top: 12px; border-left: 3px solid #8be9fd;">
+                    <strong style="color: #8be9fd;">Implication Hierarchy:</strong><br>
+                    <code>Mean-Square (L&sup2;) &rArr; Convergence in Probability (&rarr;&#7510;) &rArr; Convergence in Distribution (&rarr;&#7496;)</code><br>
+                    <code>Almost Sure (a.s.) &rArr; Convergence in Probability (&rarr;&#7510;) &rArr; Convergence in Distribution (&rarr;&#7496;)</code><br>
+                    <span style="font-size: 0.9em; color: #aaa;">(Note: L&sup2; and a.s. do not imply each other in general; convergence in distribution to a constant <em>c</em> implies convergence in probability to <em>c</em>.)</span>
+                </div>
+            </div>
+
+            <!-- THEORETICAL EXPLANATION: ROLE OF SQRT(N) -->
+            <div class="explanation-box border-cyan">
+                <h3 style="color: #8be9fd; margin-top: 0;">&#128221; Why &radic;n Appears in Convergence Theorems &amp; Inference</h3>
+                <ul>
+                    <li style="margin-bottom: 10px;"><strong>Additivity of Variance Under Independence:</strong> Consider i.i.d. (or pairwise uncorrelated) random variables <em>X&#8321;, &hellip;, X&#8345;</em> with mean &mu; and finite variance &sigma;&sup2;. Because covariances vanish under independence (<code>Cov(X&#7522;, X&#11388;) = 0</code> for <em>i &ne; j</em>), the variance of the partial sum <code>S&#8345; = &Sigma; X&#7522;</code> grows linearly with <em>n</em>:
+                        <br><code>Var(S&#8345;) = &Sigma;&#7522;&#8321;&#8319; Var(X&#7522;) = n&sigma;&sup2; &nbsp;&rArr;&nbsp; SD(S&#8345;) = &sigma;&radic;n</code>.
+                    </li>
+                    <li style="margin-bottom: 10px;"><strong>Balancing Degeneracy vs. Explosion:</strong> Dividing <em>S&#8345; &minus; n&mu;</em> by <em>n</em> (as in the LLN) forces the variance to shrink as <code>&sigma;&sup2;/n &rarr; 0</code>, collapsing the limit to a degenerate point mass at 0. Not dividing at all leaves a variance of <code>n&sigma;&sup2; &rarr; &infin;</code>. Dividing by <strong>&radic;n</strong> is the unique scaling rate that stabilizes the asymptotic variance to 1:
+                        <br><code>Z&#8345; = (S&#8345; &minus; n&mu;) / (&sigma;&radic;n) = &radic;n (X&#772;&#8345; &minus; &mu;) / &sigma; &rarr;&#7496; N(0, 1)</code>.
+                    </li>
+                    <li><strong>Impact on Statistical Inference (The &radic;n Law of Precision):</strong> For the sample mean <code>X&#772;&#8345;</code>, the Standard Error is <code>SE(X&#772;&#8345;) = &sigma; / &radic;n</code>. Consequently, confidence interval widths shrink at rate <code>O(n&#8315;&sup1;&#8260;&sup2;)</code>: to cut estimation uncertainty in half, an analyst must collect <strong>four times</strong> as much data. (If observations are positively correlated rather than independent, variance grows faster than <em>n</em> and the effective sample size drops below <em>n</em>.)</li>
+                </ul>
+            </div>
+
+            <!-- INTERACTIVE SIMULATOR FOR PART 1 -->
+            <aside class="controls-box border-cyan" style="margin-top: 20px;">
+                <h3 style="margin-top: 0; color: #8be9fd;">Interactive Convergence &amp; &radic;n Scaling Simulator</h3>
+                <div class="inputs-row">
+                    <div style="flex: 1; min-width: 190px;">
+                        <label for="convDistSelect">Underlying Distribution:</label>
+                        <select id="convDistSelect">
+                            <option value="bernoulli">Bernoulli(p = 0.5) [&mu;=0.5, &sigma;&sup2;=0.25]</option>
+                            <option value="uniform">Uniform[0, 1] [&mu;=0.5, &sigma;&sup2;=1/12]</option>
+                            <option value="exponential">Exponential(&lambda; = 1) [&mu;=1.0, &sigma;&sup2;=1.0]</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="convN">Sample Size (n):</label>
+                        <input type="number" id="convN" value="200" min="10" max="2000">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="convM">Trajectories (m):</label>
+                        <input type="number" id="convM" value="150" min="20" max="500">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="convEps">Tolerance (&varepsilon;):</label>
+                        <input type="number" id="convEps" value="0.05" min="0.01" max="0.5" step="0.01">
+                    </div>
+                </div>
+                <button id="runConvBtn" type="button">Simulate Convergence Modes</button>
+            </aside>
+
+            <div class="result-box border-pink">
+                <h3 style="color: #ff79c6; margin-top: 0;">Empirical Convergence Metrics at Step n</h3>
+                <p>Empirical Tail Probability <code>P(|X&#772;&#8345; &minus; &mu;| &gt; &varepsilon;)</code> (WLLN): <span class="highlight-data" id="emp-prob-out">-</span></p>
+                <p>Empirical MSE <code>E[(X&#772;&#8345; &minus; &mu;)&sup2;]</code> vs. Theoretical <code>&sigma;&sup2;/n</code> (L&sup2;): <span class="highlight-data" id="emp-mse-out">-</span></p>
+                <p>Empirical Variance of <code>&radic;n(X&#772;&#8345; &minus; &mu;)/&sigma;</code> (CLT Stability, target = 1.00): <span class="highlight-data" id="emp-clt-var-out">-</span></p>
+            </div>
+
+            <div class="result-box border-cyan">
+                <h3 style="color: #8be9fd; margin-top: 0;">1A. Sample Mean Paths X&#772;&#8345; &amp; Tolerance Tube &mu; &plusmn; &varepsilon; (a.s. &amp; In Probability)</h3>
+                <div id="chartConvPaths"></div>
+            </div>
+
+            <div class="result-box border-purple">
+                <h3 style="color: #bd93f9; margin-top: 0;">1B. Convergence in Distribution: Empirical CDF of &radic;n(X&#772;&#8345; &minus; &mu;)/&sigma; vs. N(0, 1)</h3>
+                <div id="chartConvCDF"></div>
+            </div>
+
+            <!-- ========================================================== -->
+            <!-- PART 2: CONDITIONAL PROBABILITY, BAYES & INFERENCE         -->
+            <!-- ========================================================== -->
+            <hr class="section-divider">
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: #50fa7b; border: none; font-size: 1.7em; margin-bottom: 5px;">Part 2: Conditional Probability, Bayes' Theorem &amp; Statistical Inference</h2>
+            </div>
+
+            <!-- THEORETICAL EXPLANATION: BAYESIAN INFERENCE -->
+            <div class="explanation-box border-purple" style="margin-top: 0;">
+                <h3 style="color: #bd93f9; margin-top: 0;">&#128221; Conditional Probability, Bayes' Theorem &amp; The Three Core Components</h3>
+                <p>In probability theory, for two events <em>A</em> and <em>B</em> with <code>P(B) &gt; 0</code>, the <strong>conditional probability</strong> of <em>A</em> given <em>B</em> restricts the sample space to outcomes where <em>B</em> has occurred: <code>P(A | B) = P(A &cap; B) / P(B)</code>. Applying the symmetry of intersection <code>P(A &cap; B) = P(B | A)P(A)</code> yields <strong>Bayes' Theorem</strong>.</p>
+                <p>In statistical inference, we replace abstract events with an unknown model parameter <em>&theta;</em> and observed data <em>D</em>:</p>
+
+                <div style="background-color: #252533; padding: 15px; border-radius: 6px; margin: 14px 0; font-family: monospace; text-align: center; font-size: 1.05em; color: #50fa7b;">
+                    P(&theta; | D) = [ P(D | &theta;) &middot; P(&theta;) ] / P(D) &nbsp;&prop;&nbsp; Likelihood &times; Prior
+                </div>
+
+                <ul>
+                    <li style="margin-bottom: 10px;"><strong>1. Prior Probability <code>P(&theta;)</code>:</strong> Represents our state of knowledge, domain expertise, or baseline uncertainty about the parameter <em>&theta;</em> <em>before</em> observing the current dataset <em>D</em>.</li>
+                    <li style="margin-bottom: 10px;"><strong>2. Likelihood Function <code>L(&theta; | D) = P(D | &theta;)</code>:</strong> Derived from the statistical sampling model, it evaluates how plausible the observed data <em>D</em> are under each candidate value of <em>&theta;</em>. (Note: as a function of <em>&theta;</em>, the likelihood is not a probability distribution and need not integrate to 1.)</li>
+                    <li style="margin-bottom: 10px;"><strong>3. Posterior Probability <code>P(&theta; | D)</code>:</strong> The updated probability distribution over <em>&theta;</em> after combining prior beliefs with empirical evidence, normalized by the marginal likelihood (evidence) <code>P(D) = &int; P(D | &theta;)P(&theta;) d&theta;</code>.</li>
+                    <li><strong>Why Sequential Updating is Central:</strong> Bayesian inference treats learning as a coherent, recursive process: today's posterior distribution <code>P(&theta; | D&#8321;)</code> becomes tomorrow's prior when a new batch of data <code>D&#8322;</code> arrives, yielding the exact same result as conditioning on <code>(D&#8321;, D&#8322;)</code> jointly.</li>
+                </ul>
+            </div>
+
+            <!-- EXAMPLES, ADVANTAGES & LIMITATIONS -->
+            <div class="explanation-box border-red">
+                <h3 style="color: #ff5555; margin-top: 0;">&#128221; Practical Examples, Advantages &amp; Limitations</h3>
+                <ul>
+                    <li style="margin-bottom: 10px;"><strong>Example 1 &mdash; Beta-Binomial Vulnerability Rate Estimation:</strong> Suppose we want to estimate the true breach probability <em>&theta; &isin; [0, 1]</em> of a hardened server. We encode prior domain knowledge as a conjugate <code>Beta(&alpha;, &beta;)</code> prior (where &alpha;&minus;1 and &beta;&minus;1 act as pseudo-successes and pseudo-failures). After observing <em>k</em> breaches in <em>n</em> independent attacks via a Binomial likelihood <code>P(k | n, &theta;) &prop; &theta;&#7503;(1&minus;&theta;)&#8319;&#8315;&#7503;</code>, Bayes' theorem yields an exact conjugate posterior: <code>Beta(&alpha; + k, &beta; + n &minus; k)</code>.</li>
+                    <li style="margin-bottom: 10px;"><strong>Example 2 &mdash; Intrusion Detection Alert (Base-Rate Fallacy):</strong> Suppose an IDS has 99% sensitivity <code>P(Alert | Attack) = 0.99</code> and a 1% false-positive rate <code>P(Alert | Benign) = 0.01</code>, but actual attacks are rare with prior prevalence <code>P(Attack) = 0.001</code>. By Bayes' theorem, <code>P(Attack | Alert) = (0.99 &times; 0.001) / (0.99 &times; 0.001 + 0.01 &times; 0.999) &approx; 9.02%</code>. Ignoring the low prior leads to severe overestimation of true threats.</li>
+                    <li style="margin-bottom: 10px;"><strong>Advantages:</strong> Directly answers intuitive probability questions (e.g., 95% credible intervals), naturally incorporates historical or physical constraints, remains valid for small sample sizes without relying on asymptotic approximations, and regularizes noisy estimates.</li>
+                    <li><strong>Limitations &amp; Influence on Conclusions:</strong> When sample size <em>n</em> is small, a strongly informative or misspecified prior can heavily bias the posterior conclusions. Conversely, as <em>n &rarr; &infin;</em>, the likelihood overwhelms any reasonable prior (the Bernstein&ndash;von Mises theorem), and the posterior concentrates around the true parameter just like frequentist estimators.</li>
+                </ul>
+            </div>
+
+            <!-- INTERACTIVE BETA-BINOMIAL BAYESIAN UPDATING SIMULATOR -->
+            <aside class="controls-box border-cyan" style="margin-top: 20px;">
+                <h3 style="margin-top: 0; color: #8be9fd;">Interactive Beta-Binomial Bayesian Updating Simulator</h3>
+                
+                <div class="inputs-row" style="margin-bottom: 12px;">
+                    <button id="presetBayesUninf" type="button" style="flex: 1; background: #8be9fd; margin-top: 0; font-size: 0.95em;">Preset: Flat Prior + Small Sample</button>
+                    <button id="presetBayesStrong" type="button" style="flex: 1; background: #ffb86c; margin-top: 0; font-size: 0.95em;">Preset: Strong Prior + Small Sample</button>
+                    <button id="presetBayesLarge" type="button" style="flex: 1; background: #bd93f9; margin-top: 0; font-size: 0.95em;">Preset: Strong Prior + Large Sample</button>
+                </div>
+
+                <div class="inputs-row">
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="bayesAlpha">Prior &alpha; (Beta):</label>
+                        <input type="number" id="bayesAlpha" value="2" min="0.5" max="200" step="0.5">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="bayesBeta">Prior &beta; (Beta):</label>
+                        <input type="number" id="bayesBeta" value="8" min="0.5" max="200" step="0.5">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="bayesK">Observed Successes (k):</label>
+                        <input type="number" id="bayesK" value="6" min="0" max="5000">
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="bayesN">Observed Trials (n):</label>
+                        <input type="number" id="bayesN" value="10" min="1" max="5000">
+                    </div>
+                </div>
+
+                <button id="runBayesBtn" type="button" style="background: #50fa7b;">Update Posterior Distribution</button>
+            </aside>
+
+            <div class="result-box border-pink">
+                <h3 style="color: #ff79c6; margin-top: 0;">Bayesian Inference Summary</h3>
+                <p>Prior Distribution &amp; Mean: <span class="highlight-data" id="bayes-prior-out">-</span></p>
+                <p>Observed Data &amp; Maximum Likelihood Estimate (k / n): <span class="highlight-data" id="bayes-mle-out">-</span></p>
+                <p>Posterior Distribution &amp; Mean: <span class="success-data" id="bayes-post-out">-</span></p>
+                <p>95% Bayesian Credible Interval (Equal-Tailed): <span class="highlight-data" id="bayes-ci-out">-</span></p>
+            </div>
+
+            <div class="result-box border-cyan">
+                <h3 style="color: #8be9fd; margin-top: 0;">2. Prior, Normalized Likelihood &amp; Posterior Density Curves</h3>
+                <div id="chartBayes"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
